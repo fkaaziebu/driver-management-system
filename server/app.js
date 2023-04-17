@@ -1,9 +1,9 @@
 const express = require("express");
-const authRoutes = require("./routes/auth.js");
+const driverAuthRoutes = require("./routes/driver/auth.js");
 
 const app = express();
 
 /* ROUTES */
-app.use(authRoutes);
+app.use(driverAuthRoutes);
 
 module.exports = app;
