@@ -1,12 +1,16 @@
 const DriverService = require("../../services/DriverService");
+const { validationResult } = require("express-validator");
 
 const register = async (req, res) => {
-  if (!req.body.username) {
-    return res.status(400).send({ validationErrors: {username: "Username cannot be null"} });
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const validationErrors = {};
+    errors.array().forEach((error) => {
+      validationErrors[error.path] = error.msg;
+    });
+    return res.status(400).send({ validationErrors: validationErrors });
   }
-  if (!req.body.email) {
-    return res.status(400).send({validationErrors: {email: "Email cannot be null"}})
-  }
+
   await DriverService.save(req.body);
   return res.send({ message: "Driver created" });
 };

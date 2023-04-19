@@ -67,24 +67,41 @@ describe("Driver Registration", () => {
       ...validUser,
       username: null,
     });
-    expect(response.body.validationErrors).not.toBeUndefined();
+    const body = response.body;
+    expect(body.validationErrors).not.toBeUndefined();
   });
-  it("returns Username cannot be null when username is null", async () => {
+  it("returns errors for both when username and email is null", async () => {
     const response = await postUser({
       ...validUser,
       username: null,
-    });
-    expect(response.body.validationErrors.username).toBe(
-      "Username cannot be null"
-    );
-  });
-  it("returns Email cannot be null when email is null", async () => {
-    const response = await postUser({
-      ...validUser,
       email: null,
     });
-    expect(response.body.validationErrors.email).toBe(
-      "Email cannot be null"
-    );
+    expect(Object.keys(response.body.validationErrors)).toEqual([
+      "username",
+      "email",
+    ]);
   });
+
+  //Dynamic test for similar test
+  it.each`
+    field         | value   | expectedMessage
+    ${"username"} | ${null} | ${"Username cannot be null"}
+    ${"email"}    | ${null} | ${"Email cannot be null"}
+    ${"contact"}  | ${null} | ${"Contact cannot be null"}
+    ${"password"}  | ${null} | ${"Password cannot be null"}
+  `(
+    "returns $expectedMessage when $field is $value",
+    async ({ field, expectedMessage, value }) => {
+      const user = {
+        username: "user1",
+        email: "user1@mail.com",
+        contact: "0550815604",
+        password: "P4ssword",
+      };
+      user[field] = value;
+      const response = await postUser(user);
+      const body = response.body;
+      expect(body.validationErrors[field]).toBe(expectedMessage);
+    }
+  );
 });
