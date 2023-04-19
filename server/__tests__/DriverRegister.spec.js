@@ -69,4 +69,22 @@ describe("Driver Registration", () => {
     });
     expect(response.body.validationErrors).not.toBeUndefined();
   });
+  it("returns Username cannot be null when username is null", async () => {
+    const response = await postUser({
+      ...validUser,
+      username: null,
+    });
+    expect(response.body.validationErrors.username).toBe(
+      "Username cannot be null"
+    );
+  });
+  it("returns Email cannot be null when email is null", async () => {
+    const response = await postUser({
+      ...validUser,
+      email: null,
+    });
+    expect(response.body.validationErrors.email).toBe(
+      "Email cannot be null"
+    );
+  });
 });
