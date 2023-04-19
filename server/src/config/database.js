@@ -9,4 +9,6 @@ const sequelize = new Sequelize(
         storage: "./database.sqlite",
         logging: false
     }
-)
+);
+
+module.exports = sequelize;

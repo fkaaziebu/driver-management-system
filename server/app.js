@@ -1,5 +1,5 @@
 const express = require("express");
-const driverAuthRoutes = require("./routes/driver/auth.js");
+const driverAuthRoutes = require("./src/routes/driver/auth.js");
 
 const app = express();
 

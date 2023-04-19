@@ -3,14 +3,17 @@ const sequelize = require("../config/database");
 
 const Model = Sequelize.Model;
 
-class User extends Model {}
+class Driver extends Model {}
 
-User.init(
+Driver.init(
   {
     username: {
       type: Sequelize.STRING,
     },
     email: {
+      type: Sequelize.STRING,
+    },
+    contact: {
       type: Sequelize.STRING,
     },
     password: {
