@@ -46,15 +46,27 @@ describe("Driver Registration", () => {
     expect(driver.username).toBe("user1");
     expect(driver.email).toBe("user1@mail.com");
     expect(driver.contact).toBe("0550815604");
-  })
+  });
   it("hashes password to database", async () => {
     await postUser();
     const drivers = await Driver.findAll();
     driver = drivers[0];
     expect(driver.password).not.toBe("P4ssword");
-  })
-
+  });
 
   /* INVALID REQUEST */
-  
+  it("returns 400 when username is null", async () => {
+    const response = await postUser({
+      ...validUser,
+      username: null,
+    });
+    expect(response.status).toBe(400);
+  });
+  it("returns a validationError field in response body when validation error occur", async () => {
+    const response = await postUser({
+      ...validUser,
+      username: null,
+    });
+    expect(response.body.validationErrors).not.toBeUndefined();
+  });
 });
