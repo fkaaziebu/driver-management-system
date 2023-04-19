@@ -84,11 +84,25 @@ describe("Driver Registration", () => {
 
   //Dynamic test for similar test
   it.each`
-    field         | value   | expectedMessage
-    ${"username"} | ${null} | ${"Username cannot be null"}
-    ${"email"}    | ${null} | ${"Email cannot be null"}
-    ${"contact"}  | ${null} | ${"Contact cannot be null"}
-    ${"password"}  | ${null} | ${"Password cannot be null"}
+    field         | value              | expectedMessage
+    ${"username"} | ${null}            | ${"Username cannot be null"}
+    ${"email"}    | ${null}            | ${"Email cannot be null"}
+    ${"contact"}  | ${null}            | ${"Contact cannot be null"}
+    ${"password"} | ${null}            | ${"Password cannot be null"}
+    ${"username"} | ${"usr"}           | ${"Must have min 4 and max 32 characters"}
+    ${"username"} | ${"a".repeat(33)}  | ${"Must have min 4 and max 32 characters"}
+    ${"email"}    | ${"mail.com"}      | ${"Email is not valid"}
+    ${"email"}    | ${"user.mail.com"} | ${"Email is not valid"}
+    ${"email"}    | ${"user@mail"}     | ${"Email is not valid"}
+    ${"contact"}  | ${"055"}           | ${"Must be equal to 10 characters"}
+    ${"contact"}  | ${"05508156041"}   | ${"Must be equal to 10 characters"}
+    ${"password"} | ${"P4ssw"}         | ${"Password must be atleast 6 characters"}
+    ${"password"} | ${"alllowercase"}  | ${"Password must have at least 1 uppercase, 1 lowercase letter and 1 number"}
+    ${"password"} | ${"ALLUPPERCASE"}  | ${"Password must have at least 1 uppercase, 1 lowercase letter and 1 number"}
+    ${"password"} | ${"1234567890"}    | ${"Password must have at least 1 uppercase, 1 lowercase letter and 1 number"}
+    ${"password"} | ${"lowerandUPPER"} | ${"Password must have at least 1 uppercase, 1 lowercase letter and 1 number"}
+    ${"password"} | ${"lower4nd5667"}  | ${"Password must have at least 1 uppercase, 1 lowercase letter and 1 number"}
+    ${"password"} | ${"UPPER44444"}    | ${"Password must have at least 1 uppercase, 1 lowercase letter and 1 number"}
   `(
     "returns $expectedMessage when $field is $value",
     async ({ field, expectedMessage, value }) => {
@@ -104,4 +118,9 @@ describe("Driver Registration", () => {
       expect(body.validationErrors[field]).toBe(expectedMessage);
     }
   );
+  it("returns Email in use when same email is already in use", async () => {
+    await Driver.create({ ...validUser });
+    const response = await postUser();
+    expect(response.body.validationErrors.email).toBe("Email in use");
+  });
 });
