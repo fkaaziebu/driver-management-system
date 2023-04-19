@@ -123,4 +123,32 @@ describe("Driver Registration", () => {
     const response = await postUser();
     expect(response.body.validationErrors.email).toBe("Email in use");
   });
+  it("returns errors for both username is null and email in use", async () => {
+    await Driver.create({ ...validUser });
+    const response = await postUser({
+      username: null,
+      email: validUser.email,
+      contact: "0550815604",
+      password: "P4ssword",
+    });
+
+    const body = response.body;
+    expect(Object.keys(body.validationErrors)).toEqual(["username", "email"]);
+  });
+  it("returns errors for username is null, email in use and contact is null", async () => {
+    await Driver.create({ ...validUser });
+    const response = await postUser({
+      username: null,
+      email: validUser.email,
+      contact: null,
+      password: "P4ssword",
+    });
+
+    const body = response.body;
+    expect(Object.keys(body.validationErrors)).toEqual([
+      "username",
+      "email",
+      "contact",
+    ]);
+  });
 });
