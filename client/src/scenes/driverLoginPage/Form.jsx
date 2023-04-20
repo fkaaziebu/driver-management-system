@@ -41,9 +41,8 @@ const initialValuesLogin = {
 
 const Form = () => {
   const [pageType, setPageType] = useState("login");
+  const [errors, setErrors] = useState([]);
   const { palette } = useTheme();
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const isLogin = pageType === "login";
   const isRegister = pageType === "register";
@@ -62,8 +61,7 @@ const Form = () => {
     const savedUser = await loggedInResponse.json();
     onSubmitProps.resetForm();
 
-    if (savedUser) {
-      console.log(savedUser);
+    if (savedUser.validationErrors) {
       setPageType("login");
     }
   };
