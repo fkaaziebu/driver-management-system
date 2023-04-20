@@ -41,7 +41,6 @@ const initialValuesLogin = {
 
 const Form = () => {
   const [pageType, setPageType] = useState("login");
-  const [errors, setErrors] = useState([]);
   const { palette } = useTheme();
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const isLogin = pageType === "login";
@@ -50,7 +49,7 @@ const Form = () => {
   const register = async (values, onSubmitProps) => {
     // this allows us to send form info with image
     const loggedInResponse = await fetch(
-      "https://driver-management-backend.onrender.com/api/1.0/drivers/auth",
+      "http://localhost:3001/api/1.0/drivers/auth/",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -61,7 +60,8 @@ const Form = () => {
     const savedUser = await loggedInResponse.json();
     onSubmitProps.resetForm();
 
-    if (savedUser.validationErrors) {
+    if (savedUser) {
+      console.log(savedUser);
       setPageType("login");
     }
   };
@@ -106,7 +106,6 @@ const Form = () => {
         handleBlur,
         handleChange,
         handleSubmit,
-        setFieldValue,
         resetForm,
       }) => (
         <form onSubmit={handleSubmit}>
