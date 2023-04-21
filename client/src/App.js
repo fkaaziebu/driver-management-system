@@ -18,6 +18,7 @@ function App() {
           <CssBaseline />
           <Routes>
             <Route path="/" element={<AdminLoginPage />} />
+            <Route path="/driver" element={<DriverLoginPage />} />
           </Routes>
         </ThemeProvider>
       </BrowserRouter>

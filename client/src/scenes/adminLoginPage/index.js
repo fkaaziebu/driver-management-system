@@ -1,10 +1,12 @@
 import { Box, Typography, useTheme, useMediaQuery } from "@mui/material"; // Importing necessary MUI components and hooks
 import Form from "./Form"; // Importing the Form component
+import { useState } from "react";
 
 const AdminLoginPage = () => {
   // Defining a functional component named AdminLoginPage
   const theme = useTheme(); // Getting the current theme object
   const isNonMobileScreens = useMediaQuery("(min-width: 1000px)"); // Setting a boolean variable based on the media query
+  const [pageType, setPageType] = useState("login");
 
   return (
     // Returning JSX elements
@@ -28,10 +30,10 @@ const AdminLoginPage = () => {
         borderRadius="1.5rem" // Setting border radius
         backgroundColor={theme.palette.background.alt} // Setting background color using the theme object
       >
-        <Typography fontWeight="500" variant="h5" sx={{ mb: "1.5rem" }}>
-          Sign-in
+        <Typography fontWeight="500" variant="h5" sx={{ mb: "2.5rem" }}>
+          Welcome to the Administrator {pageType === "login" ? "Sign-in" : "Sign-up"} page
         </Typography>
-        <Form />
+        <Form pageType={pageType} setPageType={setPageType} />
       </Box>
     </Box>
   );
