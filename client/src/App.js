@@ -6,6 +6,7 @@ import { createTheme } from "@mui/material/styles";
 import { themeSettings } from "theme";
 import DriverLoginPage from "scenes/driverLoginPage";
 import AdminLoginPage from "scenes/adminLoginPage";
+import LandingPage from "scenes/landingPage";
 
 function App() {
   const mode = useSelector((state) => state.mode);
@@ -17,7 +18,8 @@ function App() {
         <ThemeProvider theme={theme}>
           <CssBaseline />
           <Routes>
-            <Route path="/" element={<AdminLoginPage />} />
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/admin" element={<AdminLoginPage />} />
             <Route path="/driver" element={<DriverLoginPage />} />
           </Routes>
         </ThemeProvider>
