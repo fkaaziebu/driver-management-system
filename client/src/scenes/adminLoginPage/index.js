@@ -30,10 +30,10 @@ const AdminLoginPage = () => {
         borderRadius="1.5rem" // Setting border radius
         backgroundColor={theme.palette.background.alt} // Setting background color using the theme object
       >
-        <Typography fontWeight="500" variant="h5" sx={{ mb: "1.5rem" }}>
-          Sign-in
+        <Typography fontWeight="500" variant="h5" sx={{ mb: "2.5rem" }}>
+          Welcome to the Administrator {pageType === "login" ? "Sign-in" : "Sign-up"} page
         </Typography>
-        <Form pageType={pageT} setPageType={setPageType}/>
+        <Form />
       </Box>
     </Box>
   );
