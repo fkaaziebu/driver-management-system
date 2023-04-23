@@ -65,8 +65,7 @@ const initialValuesLogin = {
 };
 
 // Define a functional component called "Form"
-const Form = () => {
-  const [pageType, setPageType] = useState("login"); // Define state variables: "pageType" and "setPageType" using the "useState" hook
+const Form = ({pageType, setPageType}) => { // Define state variables: "pageType" and "setPageType" using the "useState" hook
   const { palette } = useTheme(); // Define a constant variable called "palette" using the "useTheme" hook
   const isNonMobile = useMediaQuery("(min-width:600px)"); // Define a constant variable called "isNonMobile" using the "useMediaQuery" hook with a query string
   const isLogin = pageType === "login"; // Define constant variables "isLogin" and "isRegister" based on "pageType"

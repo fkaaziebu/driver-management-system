@@ -1,18 +1,18 @@
+const ValidationException = require("../../error/ValidationException");
 const DriverService = require("../../services/DriverService");
 const { validationResult } = require("express-validator");
 
-const register = async (req, res) => {
+const register = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    const validationErrors = {};
-    errors.array().forEach((error) => {
-      validationErrors[error.path] = error.msg;
-    });
-    return res.status(400).send({ validationErrors: validationErrors });
+    return next(new ValidationException(errors.array()));
   }
-
-  await DriverService.save(req.body);
-  return res.send({ message: "Driver created" });
+  try {
+    await DriverService.save(req.body);
+    return res.send({ message: "Driver created" });
+  } catch (err) {
+    next(err);
+  }
 };
 
 module.exports = register;

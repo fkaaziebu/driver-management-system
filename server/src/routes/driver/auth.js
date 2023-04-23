@@ -1,5 +1,7 @@
 const express = require("express");
 const register = require("../../controllers/driver/auth");
+const activate = require("../../controllers/driver/activate");
+const getDriver = require("../../controllers/driver/getDriver.js");
 const { check } = require("express-validator");
 const DriverService = require("../../services/DriverService");
 
@@ -45,5 +47,9 @@ router.post(
     ),
   register
 );
+
+router.post("/api/1.0/driver/auth/token/:token", activate);
+
+router.get("/api/1.0/drivers/:id", getDriver);
 
 module.exports = router;

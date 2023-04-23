@@ -1,10 +1,17 @@
 {
-    "database": {
-        "database": "driver-management",
-        "username": "driver-management",
-        "password": "db-p4ss",
-        "dialect": "sqlite",
-        "storage": ":memory:",
-        "logging": false 
+  "database": {
+    "database": "driver-management",
+    "username": "driver-management",
+    "password": "db-p4ss",
+    "dialect": "sqlite",
+    "storage": ":memory:",
+    "logging": false
+  },
+  "mail": {
+    "host": "localhost",
+    "port": 8687,
+    "tls": {
+      "rejectUnauthorized": false
     }
+  }
 }
