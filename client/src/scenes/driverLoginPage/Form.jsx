@@ -70,18 +70,30 @@ const Form = ({ pageType, setPageType }) => {
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get("token");
     console.log("token: " + urlParams.get("token"));
-    const loggedInResponse = await fetch(
-      `http://localhost:3001/api/1.0/driver/auth/token/${token}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
-      }
-    );
+    let loggedInResponse;
+    if (!token) {
+      loggedInResponse = await fetch(
+        `http://localhost:3001/api/1.0/drivers/1`,
+        {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(values),
+        }
+      );
+    } else {
+      loggedInResponse = await fetch(
+        `http://localhost:3001/api/1.0/driver/auth/token/${token}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(values),
+        }
+      );
+    }
     const loggedIn = await loggedInResponse.json();
     onSubmitProps.resetForm();
     if (loggedIn) {
-      console.log(loggedIn);
+      console.log(loggedIn.message);
       //   dispatch(
       //     setLogin({
       //       user: loggedIn.user,
