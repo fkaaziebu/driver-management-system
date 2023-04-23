@@ -30,7 +30,7 @@ const DriverLoginPage = () => {
           Welcome to the Driver {pageType === "login" ? "Sign-in" : "Sign-up"}{" "}
           page
         </Typography>
-        <Form />
+        <Form pageType={pageType} setPageType={setPageType} />
       </Box>
     </Box>
   );

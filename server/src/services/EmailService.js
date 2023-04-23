@@ -11,7 +11,7 @@ const sendAccountActivation = async (email, token) => {
       <h>Please click below link to activate your account</h>
     </div>
     <div>
-      <a href="http://localhost:8080/#/login?token-${token}">Activate</a>
+      <a href="http://localhost:3000/driver/auth?token=${token}">Activate</a>
     </div>
     Token is ${token}`,
   });

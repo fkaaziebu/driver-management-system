@@ -15,10 +15,10 @@ function LandingPage() {
     <h1 className="heading">Driver Management System</h1>
     <p className="subheading">Please select your role:</p>
     <div className="button-container">
-      <Link className="admin-button" to="/admin">
+      <Link className="admin-button" to="/admin/auth">
         Administrator
       </Link>
-      <Link className="driver-button" to="/driver">
+      <Link className="driver-button" to="/driver/auth">
         Driver
       </Link>
     </div>

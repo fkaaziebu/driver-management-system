@@ -8,9 +8,9 @@ const app = express();
 
 /* MIDDLEWARE CONFIGS */
 app.use(express.json());
-// app.use(helmet());
-// app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
-// app.use(cors());
+app.use(helmet());
+app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
+app.use(cors());
 
 /* ROUTES */
 app.use(driverAuthRoutes);

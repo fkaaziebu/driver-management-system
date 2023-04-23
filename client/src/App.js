@@ -19,8 +19,8 @@ function App() {
           <CssBaseline />
           <Routes>
             <Route path="/" element={<LandingPage />} />
-            <Route path="/admin" element={<AdminLoginPage />} />
-            <Route path="/driver" element={<DriverLoginPage />} />
+            <Route path="/admin/auth" element={<AdminLoginPage />} />
+            <Route path="/driver/auth" element={<DriverLoginPage />} />
           </Routes>
         </ThemeProvider>
       </BrowserRouter>

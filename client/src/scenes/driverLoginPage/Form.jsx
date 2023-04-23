@@ -39,8 +39,7 @@ const initialValuesLogin = {
   password: "",
 };
 
-const Form = () => {
-  const [pageType, setPageType] = useState("login");
+const Form = ({ pageType, setPageType }) => {
   const { palette } = useTheme();
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const isLogin = pageType === "login";
@@ -49,7 +48,7 @@ const Form = () => {
   const register = async (values, onSubmitProps) => {
     // this allows us to send form info with image
     const loggedInResponse = await fetch(
-      "http://localhost:3001/api/1.0/drivers/auth/",
+      "http://localhost:3001/api/1.0/drivers/auth",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -66,26 +65,31 @@ const Form = () => {
     }
   };
 
-  const login = async (values, onSubmitProps) => {
-    // const loggedInResponse = await fetch(
-    //   "https://driver-management-backend.onrender.com/api/1.0/drivers/auth",
-    //   {
-    //     method: "POST",
-    //     headers: { "Content-Type": "application/json" },
-    //     body: JSON.stringify(values),
-    //   }
-    // );
-    // const loggedIn = await loggedInResponse.json();
-    // onSubmitProps.resetForm();
-    // if (loggedIn) {
-    //   dispatch(
-    //     setLogin({
-    //       user: loggedIn.user,
-    //       token: loggedIn.token,
-    //     })
-    //   );
-    //   navigate("/home");
-    // }
+  const login = async (req, res, values, onSubmitProps) => {
+    // const token =
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get("token");
+    console.log("token: " + urlParams.get("token"));
+    const loggedInResponse = await fetch(
+      `http://localhost:3001/api/1.0/driver/auth/token/${token}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(values),
+      }
+    );
+    const loggedIn = await loggedInResponse.json();
+    onSubmitProps.resetForm();
+    if (loggedIn) {
+      console.log(loggedIn);
+      //   dispatch(
+      //     setLogin({
+      //       user: loggedIn.user,
+      //       token: loggedIn.token,
+      //     })
+      //   );
+      //   navigate("/home");
+    }
   };
 
   const handleFormSubmit = async (values, onSubmitProps) => {
