@@ -31,6 +31,7 @@ const AdminLoginPage = () => {
         backgroundColor={theme.palette.background.alt} // Setting background color using the theme object
       >
         <Typography fontWeight="500" variant="h5" sx={{ mb: "2.5rem" }}>
+          
           Welcome to the Administrator {pageType === "login" ? "Sign-in" : "Sign-up"} page
         </Typography>
         <Form />

@@ -46,6 +46,7 @@ export const COUNTRIES = [
   { name: "United Kingdom", code: "UK" },
   { name: "France", code: "FR" },
   { name: "Germany", code: "DE" },
+  { name: "Ghana", code: "GH"},
 ];
 //defines the initial values for a registration form
 const initialValuesRegister = {
