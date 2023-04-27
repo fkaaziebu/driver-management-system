@@ -1,8 +1,9 @@
 const request = require("supertest");
-const app = require("../app");
-const Driver = require("../src/models/Driver");
+const app = require("../src/app");
+const Driver = require("../src/driver/Driver");
 const sequelize = require("../src/config/database");
 const SMTPServer = require("smtp-server").SMTPServer;
+const en = require("../locales/en/translation.json");
 
 /* MAIL SERVICE */
 let lastMail, server;
@@ -50,7 +51,7 @@ validUser = {
 };
 
 const postUser = (user = validUser) => {
-  return request(app).post("/api/1.0/drivers/auth").send(user);
+  return request(app).post("/api/1.0/drivers").send(user);
 };
 
 describe("Driver Registration", () => {
@@ -61,7 +62,7 @@ describe("Driver Registration", () => {
   });
   it("returns success message when signup request is valid", async () => {
     const response = await postUser();
-    expect(response.body.message).toBe("Driver created");
+    expect(response.body.message).toBe(en.user_create_success);
   });
   it("saves the user to database", async () => {
     await postUser();
@@ -114,24 +115,24 @@ describe("Driver Registration", () => {
   //Dynamic test for similar test
   it.each`
     field         | value              | expectedMessage
-    ${"username"} | ${null}            | ${"Username cannot be null"}
-    ${"email"}    | ${null}            | ${"Email cannot be null"}
-    ${"contact"}  | ${null}            | ${"Contact cannot be null"}
-    ${"password"} | ${null}            | ${"Password cannot be null"}
-    ${"username"} | ${"usr"}           | ${"Must have min 4 and max 32 characters"}
-    ${"username"} | ${"a".repeat(33)}  | ${"Must have min 4 and max 32 characters"}
-    ${"email"}    | ${"mail.com"}      | ${"Email is not valid"}
-    ${"email"}    | ${"user.mail.com"} | ${"Email is not valid"}
-    ${"email"}    | ${"user@mail"}     | ${"Email is not valid"}
-    ${"contact"}  | ${"055"}           | ${"Must be equal to 10 characters"}
-    ${"contact"}  | ${"05508156041"}   | ${"Must be equal to 10 characters"}
-    ${"password"} | ${"P4ssw"}         | ${"Password must be atleast 6 characters"}
-    ${"password"} | ${"alllowercase"}  | ${"Password must have at least 1 uppercase, 1 lowercase letter and 1 number"}
-    ${"password"} | ${"ALLUPPERCASE"}  | ${"Password must have at least 1 uppercase, 1 lowercase letter and 1 number"}
-    ${"password"} | ${"1234567890"}    | ${"Password must have at least 1 uppercase, 1 lowercase letter and 1 number"}
-    ${"password"} | ${"lowerandUPPER"} | ${"Password must have at least 1 uppercase, 1 lowercase letter and 1 number"}
-    ${"password"} | ${"lower4nd5667"}  | ${"Password must have at least 1 uppercase, 1 lowercase letter and 1 number"}
-    ${"password"} | ${"UPPER44444"}    | ${"Password must have at least 1 uppercase, 1 lowercase letter and 1 number"}
+    ${"username"} | ${null}            | ${en.username_null}
+    ${"email"}    | ${null}            | ${en.email_null}
+    ${"contact"}  | ${null}            | ${en.contact_null}
+    ${"password"} | ${null}            | ${en.password_null}
+    ${"username"} | ${"usr"}           | ${en.username_size}
+    ${"username"} | ${"a".repeat(33)}  | ${en.username_size}
+    ${"email"}    | ${"mail.com"}      | ${en.email_invalid}
+    ${"email"}    | ${"user.mail.com"} | ${en.email_invalid}
+    ${"email"}    | ${"user@mail"}     | ${en.email_invalid}
+    ${"contact"}  | ${"055"}           | ${en.contact_size}
+    ${"contact"}  | ${"05508156041"}   | ${en.contact_size}
+    ${"password"} | ${"P4ssw"}         | ${en.password_size}
+    ${"password"} | ${"alllowercase"}  | ${en.password_pattern}
+    ${"password"} | ${"ALLUPPERCASE"}  | ${en.password_pattern}
+    ${"password"} | ${"1234567890"}    | ${en.password_pattern}
+    ${"password"} | ${"lowerandUPPER"} | ${en.password_pattern}
+    ${"password"} | ${"lower4nd5667"}  | ${en.password_pattern}
+    ${"password"} | ${"UPPER44444"}    | ${en.password_pattern}
   `(
     "returns $expectedMessage when $field is $value",
     async ({ field, expectedMessage, value }) => {
@@ -225,23 +226,19 @@ describe("Driver Registration", () => {
       contact: "0550815604",
       password: "P4ssword",
     });
-    expect(response.body.message).toEqual("Validation Failure");
+    expect(response.body.message).toEqual(en.validation_failure);
   });
 });
 
 // Activation of User Account
 describe("Account activation", () => {
-  const account_activation_failure =
-    "This account is either active or the token is invalid";
-  const account_activation_success = "Account is activated";
-
   it("activates the account when correct token is sent", async () => {
     await postUser();
     let users = await Driver.findAll();
     const token = users[0].activationToken;
 
     await request(app)
-      .post("/api/1.0/driver/auth/token/" + token)
+      .post("/api/1.0/drivers/token/" + token)
       .send();
     users = await Driver.findAll();
     expect(users[0].inactive).toBe(false);
@@ -252,7 +249,7 @@ describe("Account activation", () => {
     const token = users[0].activationToken;
 
     await request(app)
-      .post("/api/1.0/driver/auth/token/" + token)
+      .post("/api/1.0/drivers/token/" + token)
       .send();
     users = await Driver.findAll();
     expect(users[0].activationToken).toBeFalsy();
@@ -263,7 +260,7 @@ describe("Account activation", () => {
     const token = "this-token-does-not-exist";
 
     await request(app)
-      .post("/api/1.0/driver/auth/token/" + token)
+      .post("/api/1.0/drivers/token/" + token)
       .send();
     users = await Driver.findAll();
     expect(users[0].inactive).toBe(true);
@@ -273,15 +270,15 @@ describe("Account activation", () => {
     const token = "this-token-does-not-exist";
 
     const response = await request(app)
-      .post("/api/1.0/driver/auth/token/" + token)
+      .post("/api/1.0/drivers/token/" + token)
       .send();
     expect(response.status).toBe(400);
   });
 
   it.each`
     tokenStatus  | message
-    ${"wrong"}   | ${account_activation_failure}
-    ${"correct"} | ${account_activation_success}
+    ${"wrong"}   | ${en.account_activation_failure}
+    ${"correct"} | ${en.account_activation_success}
   `(
     "returns $message when token is $tokenStatus",
     async ({ message, tokenStatus }) => {
@@ -292,7 +289,7 @@ describe("Account activation", () => {
         token = users[0].activationToken;
       }
       const response = await request(app)
-        .post("/api/1.0/driver/auth/token/" + token)
+        .post("/api/1.0/drivers/token/" + token)
         .send();
       expect(response.body.message).toBe(message);
     }
@@ -314,7 +311,7 @@ describe("Error Model", () => {
   it("returns path, timestamp and message in response when request fails other than validation error", async () => {
     const token = "this-token-does-not-exist";
     const response = await request(app)
-      .post("/api/1.0/driver/auth/token/" + token)
+      .post("/api/1.0/drivers/token/" + token)
       .send();
     const body = response.body;
     expect(Object.keys(body)).toEqual(["path", "timestamp", "message"]);
@@ -322,17 +319,17 @@ describe("Error Model", () => {
   it("returns path in error body", async () => {
     const token = "this-token-does-not-exist";
     const response = await request(app)
-      .post("/api/1.0/driver/auth/token/" + token)
+      .post("/api/1.0/drivers/token/" + token)
       .send();
     const body = response.body;
-    expect(body.path).toEqual("/api/1.0/driver/auth/token/" + token);
+    expect(body.path).toEqual("/api/1.0/drivers/token/" + token);
   });
   it("returns timestamp in milliseconds within 5 seconds in error body", async () => {
     const nowInMillis = new Date().getTime();
     const FiveSecondsLater = nowInMillis + 5 * 1000;
     const token = "this-token-does-not-exist";
     const response = await request(app)
-      .post("/api/1.0/driver/auth/token/" + token)
+      .post("/api/1.0/drivers/token/" + token)
       .send();
     const body = response.body;
     expect(body.timestamp).toBeGreaterThan(nowInMillis);

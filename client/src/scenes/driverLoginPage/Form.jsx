@@ -48,7 +48,7 @@ const Form = ({ pageType, setPageType }) => {
   const register = async (values, onSubmitProps) => {
     // this allows us to send form info with image
     const loggedInResponse = await fetch(
-      "http://localhost:3001/api/1.0/drivers/auth",
+      "http://localhost:3001/api/1.0/drivers",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -65,24 +65,20 @@ const Form = ({ pageType, setPageType }) => {
     }
   };
 
-  const login = async (req, res, values, onSubmitProps) => {
+  const login = async (values, onSubmitProps) => {
     // const token =
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get("token");
-    console.log("token: " + urlParams.get("token"));
     let loggedInResponse;
     if (!token) {
-      loggedInResponse = await fetch(
-        `http://localhost:3001/api/1.0/drivers/1`,
-        {
-          method: "GET",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(values),
-        }
-      );
+      loggedInResponse = await fetch(`http://localhost:3001/api/1.0/auth`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(values),
+      });
     } else {
       loggedInResponse = await fetch(
-        `http://localhost:3001/api/1.0/driver/auth/token/${token}`,
+        `http://localhost:3001/api/1.0/drivers/token/${token}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

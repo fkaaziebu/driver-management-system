@@ -1,8 +1,9 @@
 const express = require("express");
-const driverAuthRoutes = require("./src/routes/driver/auth.js");
+const DriverRouter = require("./driver/DriverRouter.js");
+const AuthenticationRouter = require("./auth/AuthenticationRouter.js");
 const cors = require("cors");
 const helmet = require("helmet");
-const ErrorHandler = require("./src/error/ErrorHandler.js");
+const ErrorHandler = require("./error/ErrorHandler.js");
 
 const app = express();
 
@@ -13,7 +14,8 @@ app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
 app.use(cors());
 
 /* ROUTES */
-app.use(driverAuthRoutes);
+app.use(DriverRouter);
+app.use(AuthenticationRouter);
 
 app.use(ErrorHandler);
 

@@ -1,10 +1,10 @@
-const Driver = require("../models/Driver");
+const Driver = require("./Driver");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
-const EmailService = require("../services/EmailService");
+const EmailService = require("../email/EmailService");
 const sequelize = require("../config/database");
-const EmailException = require("../error/EmailException");
-const InvalidTokenException = require("../error/InvalidTokenException");
+const EmailException = require("../email/EmailException");
+const InvalidTokenException = require("./InvalidTokenException");
 const NotFoundException = require("../error/NotFoundException");
 
 const generateToken = (length) => {
