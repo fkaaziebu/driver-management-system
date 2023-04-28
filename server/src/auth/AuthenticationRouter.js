@@ -2,8 +2,9 @@ const express = require("express");
 const DriverService = require("../driver/DriverService");
 const AuthenticationException = require("./AuthenticationException");
 const bcrypt = require("bcrypt");
-const ForbiddenException = require("./ForbiddenException");
+const ForbiddenException = require("../error/ForbiddenException");
 const { check, validationResult } = require("express-validator");
+const TokenService = require("./TokenService");
 
 const router = express.Router();
 
@@ -31,7 +32,8 @@ router.post(
       return next(new ForbiddenException());
     }
 
-    return res.send({ id: user.id, username: user.username });
+    const token = TokenService.createToken(user);
+    return res.send({ id: user.id, username: user.username, token });
   }
 );
 

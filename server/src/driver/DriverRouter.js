@@ -3,6 +3,8 @@ const { check, validationResult } = require("express-validator");
 const DriverService = require("./DriverService");
 const ValidationException = require("../error/ValidationException");
 const en = require("../../locales/en/translation.json");
+const ForbiddenException = require("../error/ForbiddenException");
+const basicAuthentication = require("../middleware/basicAuthentication");
 
 const router = express.Router();
 
@@ -74,5 +76,19 @@ router.post("/api/1.0/drivers/token/:token", async (req, res, next) => {
 //     next(err);
 //   }
 // });
+
+router.put(
+  "/api/1.0/drivers/:id",
+  basicAuthentication,
+  async (req, res, next) => {
+    const authenticatedUser = req.authenticatedUser;
+    
+    if (!authenticatedUser || authenticatedUser.id != req.params.id) {
+      return next(new ForbiddenException(en.unauthorized_user_update));
+    }
+    await DriverService.updateUser(req.params.id, req.body);
+    return res.send();
+  }
+);
 
 module.exports = router;

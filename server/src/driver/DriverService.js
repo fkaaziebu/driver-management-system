@@ -57,4 +57,10 @@ const getUser = async (id) => {
   return user;
 };
 
-module.exports = { save, findByEmail, activate, getUser };
+const updateUser = async (id, updatedBody) => {
+  const user = await Driver.findOne({ where: { id: id } });
+  user.username = updatedBody.username;
+  await user.save();
+};
+
+module.exports = { save, findByEmail, activate, getUser, updateUser };
