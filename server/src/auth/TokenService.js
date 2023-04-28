@@ -1,7 +1,11 @@
 const jwt = require("jsonwebtoken");
 
 const createToken = (user) => {
-    return jwt.sign({ id: user.id }, "this-is-jsonwebtoken-secret");
-}
+  return jwt.sign({ id: user.id }, "this-is-jsonwebtoken-secret");
+};
 
-module.exports = { createToken };
+const verify = (token) => {
+  return jwt.verify(token, "this-is-jsonwebtoken-secret");
+};
+
+module.exports = { createToken, verify };
