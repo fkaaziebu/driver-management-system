@@ -91,4 +91,18 @@ router.put(
   }
 );
 
+router.delete(
+  "/api/1.0/drivers/:id",
+  tokenAuthentication,
+  async (req, res, next) => {
+    const authenticatedUser = req.authenticatedUser;
+
+    if (!authenticatedUser || authenticatedUser.id != req.params.id) {
+      return next(new ForbiddenException(en.unauthorized_user_delete));
+    }
+    await DriverService.deleteUser(req.params.id);
+    res.send();
+  }
+);
+
 module.exports = router;

@@ -61,7 +61,7 @@ describe("Driver update", () => {
     expect(response.body.message).toBe(en.unauthorized_user_update);
   });
   it("returns forbidden when request sent with incorrect email in basic authorization", async () => {
-    const user = await addUser();
+    await addUser();
     const response = await putUser(5, null, {
       auth: { email: "user2@mail.com", password: "P4ssword" },
     });

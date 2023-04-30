@@ -63,4 +63,15 @@ const updateUser = async (id, updatedBody) => {
   await user.save();
 };
 
-module.exports = { save, findByEmail, activate, getUser, updateUser };
+const deleteUser = async (id) => {
+  await Driver.destroy({ where: { id: id } });
+};
+
+module.exports = {
+  save,
+  findByEmail,
+  activate,
+  getUser,
+  updateUser,
+  deleteUser,
+};
