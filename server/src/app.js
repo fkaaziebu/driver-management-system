@@ -4,6 +4,7 @@ const AuthenticationRouter = require("./auth/AuthenticationRouter.js");
 const cors = require("cors");
 const helmet = require("helmet");
 const ErrorHandler = require("./error/ErrorHandler.js");
+const tokenAuthentication = require("./middleware/tokenAuthentication");
 
 const app = express();
 
@@ -14,6 +15,7 @@ app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
 app.use(cors());
 
 /* ROUTES */
+app.use(tokenAuthentication);
 app.use(DriverRouter);
 app.use(AuthenticationRouter);
 

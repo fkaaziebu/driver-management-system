@@ -9,7 +9,7 @@
   },
   "mail": {
     "host": "localhost",
-    "port": 8687,
+    "port": 8587,
     "tls": {
       "rejectUnauthorized": false
     }

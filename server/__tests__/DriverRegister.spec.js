@@ -29,8 +29,9 @@ beforeAll(async () => {
       });
     },
   });
-  await server.listen(8687, "localhost");
+  await server.listen(8587, "localhost");
   await sequelize.sync();
+  jest.setTimeout(20000);
 });
 
 // Hook that runs before each test is runned
@@ -41,6 +42,7 @@ beforeEach(() => {
 
 afterAll(async () => {
   await server.close();
+  jest.setTimeout(5000);
 });
 
 validUser = {

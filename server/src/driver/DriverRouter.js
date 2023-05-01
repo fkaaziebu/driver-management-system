@@ -77,32 +77,34 @@ router.post("/api/1.0/drivers/token/:token", async (req, res, next) => {
 //   }
 // });
 
-router.put(
-  "/api/1.0/drivers/:id",
-  tokenAuthentication,
-  async (req, res, next) => {
-    const authenticatedUser = req.authenticatedUser;
+router.put("/api/1.0/drivers/:id", async (req, res, next) => {
+  const authenticatedUser = req.authenticatedUser;
 
-    if (!authenticatedUser || authenticatedUser.id != req.params.id) {
-      return next(new ForbiddenException(en.unauthorized_user_update));
-    }
-    await DriverService.updateUser(req.params.id, req.body);
-    return res.send();
+  if (!authenticatedUser || authenticatedUser.id != req.params.id) {
+    return next(new ForbiddenException(en.unauthorized_user_update));
   }
-);
+  await DriverService.updateUser(req.params.id, req.body);
+  return res.send();
+});
 
-router.delete(
-  "/api/1.0/drivers/:id",
-  tokenAuthentication,
-  async (req, res, next) => {
-    const authenticatedUser = req.authenticatedUser;
+router.put("/api/1.0/drivers/:id", async (req, res, next) => {
+  const authenticatedUser = req.authenticatedUser;
 
-    if (!authenticatedUser || authenticatedUser.id != req.params.id) {
-      return next(new ForbiddenException(en.unauthorized_user_delete));
-    }
-    await DriverService.deleteUser(req.params.id);
-    res.send();
+  if (!authenticatedUser || authenticatedUser.id != req.params.id) {
+    return next(new ForbiddenException("unauthorized_user_update"));
   }
-);
+  await DriverService.updateUser(req.params.id, req.body);
+  return res.send();
+});
+
+router.delete("/api/1.0/drivers/:id", async (req, res, next) => {
+  const authenticatedUser = req.authenticatedUser;
+
+  if (!authenticatedUser || authenticatedUser.id != req.params.id) {
+    return next(new ForbiddenException(en.unauthorized_user_delete));
+  }
+  await DriverService.deleteUser(req.params.id);
+  res.send();
+});
 
 module.exports = router;

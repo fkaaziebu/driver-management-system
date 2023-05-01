@@ -1,15 +1,11 @@
 const Driver = require("./Driver");
 const bcrypt = require("bcrypt");
-const crypto = require("crypto");
 const EmailService = require("../email/EmailService");
 const sequelize = require("../config/database");
 const EmailException = require("../email/EmailException");
 const InvalidTokenException = require("./InvalidTokenException");
 const NotFoundException = require("../error/NotFoundException");
-
-const generateToken = (length) => {
-  return crypto.randomBytes(length).toString("hex").substring(0, length);
-};
+const { randomString } = require("../shared/generator");
 
 const save = async (body) => {
   const { username, email, contact, password } = body;
@@ -19,7 +15,7 @@ const save = async (body) => {
     email,
     contact,
     password: hash,
-    activationToken: generateToken(10),
+    activationToken: randomString(10),
   };
   const transaction = await sequelize.transaction();
   await Driver.create(user, { transaction });
