@@ -9,11 +9,9 @@ function Navbar() {
   const [open, setOpen] = useState(false);
 
   const submitLoginData = async (values) => {
-    const res = await axios.post(
-      "http://localhost:5001/api/1.0/drivers",
-      values
-    );
+    const res = await axios.post("http://localhost:5001/api/1.0/auth", values);
     console.log(res);
+    setOpen(false);
   };
 
   return (
