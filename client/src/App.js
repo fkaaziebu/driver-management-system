@@ -6,8 +6,8 @@ import { createTheme } from "@mui/material/styles";
 import { themeSettings } from "theme";
 import DriverLoginPage from "scenes/driverLoginPage";
 import AdminLoginPage from "scenes/adminLoginPage";
-import Navbar from "scenes/landingPage/Navbar";
-
+import LandingPage from "scenes/landingPage";
+import DriverProfileCompletion from "scenes/driverProfileCompletion";
 function App() {
   const mode = useSelector((state) => state.mode);
   const theme = useMemo(() => createTheme(themeSettings(mode)), [mode]);
@@ -18,8 +18,9 @@ function App() {
         <ThemeProvider theme={theme}>
           <CssBaseline />
           <Routes>
-            <Route path="/" element={<Navbar />} />
+            <Route path="/" element={<LandingPage />} />
             <Route path="/admin/auth" element={<AdminLoginPage />} />
+            <Route path="/profile/auth" element={<DriverProfileCompletion />} />
             <Route path="/driver/auth" element={<DriverLoginPage />} />
           </Routes>
         </ThemeProvider>
