@@ -2,17 +2,10 @@ import { Box, Button, Modal, Typography } from "@mui/material";
 import React, { useState } from "react";
 import FlexBetween from "./FlexBetween";
 import CarRentalIcon from "@mui/icons-material/CarRental";
-import axios from "axios";
 import SignupRegisterModal from "../components/SignupRegisterModal";
 
 function Navbar() {
   const [open, setOpen] = useState(false);
-
-  const submitLoginData = async (values) => {
-    const res = await axios.post("http://localhost:5001/api/1.0/auth", values);
-    console.log(res);
-    setOpen(false);
-  };
 
   return (
     <Box
@@ -72,7 +65,6 @@ function Navbar() {
         <SignupRegisterModal
           open={open}
           setOpen={setOpen}
-          submitLoginData={submitLoginData}
         />
       </FlexBetween>
     </Box>

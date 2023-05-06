@@ -1,85 +1,71 @@
-import React from 'react'
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Box, Button, Modal, Typography } from "@mui/material";
+import { Box, Modal, Typography } from "@mui/material";
+import axios from "axios";
+import LoginForm from "./LoginForm";
+import RegisterForm from "./RegisterForm";
 
-
-const SignupRegisterModal = ({ open, setOpen, submitLoginData }) => {
-    const {
-      register,
-      handleSubmit,
-      formState: { errors },
-    } = useForm({
-      defaultValues: {
-        email: "",
-        password: "",
+const SignupRegisterModal = ({ open, setOpen }) => {
+  const {
+    register,
+    resetField,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      email: "",
+      password: "",
+      resetOptions: {
+        keepDirtyValues: true, // user-interacted input will be retained
+        keepErrors: true, // input errors will be retained with value update
       },
-    });
-  
-    return (
-      <Modal
-        open={open}
-        onClose={() => setOpen(false)}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: 600,
-            bgcolor: "background.paper",
-            border: "2px solid #000",
-            boxShadow: 24,
-            p: 4,
-          }}
-        >
-          <form onSubmit={handleSubmit(submitLoginData)}>
-            <div className="mb-3">
-              <label for="email" className="form-label">
-                <Typography sx={{ fontSize: 20 }}>Email address</Typography>
-              </label>
-              <input
-                {...register("email", {
-                  required: "Email is required",
-                })}
-                type="email"
-                className="form-control"
-                id="email"
-                aria-describedby="emailHelp"
-                placeholder="Enter Your Email"
-                style={{ height: "60px" }}
-              />
-              <p>{errors.email?.message}</p>
-            </div>
-            <div className="mb-3">
-              <label for="password" className="form-label">
-                <Typography sx={{ fontSize: 20 }}>Password</Typography>
-              </label>
-              <input
-                {...register("password", {
-                  required: "Password is required",
-                })}
-                type="password"
-                className="form-control"
-                id="password"
-                placeholder="Enter Your Password"
-                style={{ height: "60px" }}
-              />
-              <p>{errors.password?.message}</p>
-            </div>
-            <Button
-              type="submit"
-              variant="contained"
-              sx={{ fontSize: 20, fontFamily: "Poppins", fontWeight: "600" }}
-            >
-              Submit
-            </Button>
-          </form>
-        </Box>
-      </Modal>
-    );
+    },
+  });
+  const submitLoginData = async (values) => {
+    const res = await axios.post("http://localhost:5001/api/1.0/auth", values);
+    console.log(res);
+    setOpen(false);
+    resetField("email");
+    resetField("password");
   };
 
-export default SignupRegisterModal
+  const [isLogin, setIsLogin] = useState(true);
+
+  return (
+    <Modal
+      open={open}
+      onClose={() => setOpen(false)}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+    >
+      <Box
+        sx={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          width: 600,
+          bgcolor: "background.paper",
+          border: "2px solid #000",
+          boxShadow: 24,
+          p: 4,
+        }}
+      >
+        <form onSubmit={handleSubmit(submitLoginData)}>
+          {isLogin ? <LoginForm register={register} errors={errors} /> : <RegisterForm register={register} errors={errors} />}
+          <Box sx={{ cursor: "pointer", mt: 3 }} onClick={() => setIsLogin(!isLogin)}>
+            {isLogin ? (
+              <Typography>Don't have an account? Click to register.</Typography>
+            ) : (
+              <Typography>
+                Already have an account? Click here to login
+              </Typography>
+            )}
+          </Box>
+        </form>
+      </Box>
+    </Modal>
+  );
+};
+
+export default SignupRegisterModal;
