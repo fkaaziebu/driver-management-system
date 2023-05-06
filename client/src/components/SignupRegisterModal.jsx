@@ -15,15 +15,12 @@ const SignupRegisterModal = ({ open, setOpen }) => {
     defaultValues: {
       email: "",
       password: "",
-      resetOptions: {
-        keepDirtyValues: true, // user-interacted input will be retained
-        keepErrors: true, // input errors will be retained with value update
-      },
     },
   });
   const submitLoginData = async (values) => {
-    const res = await axios.post("http://localhost:5001/api/1.0/auth", values);
-    console.log(res);
+    console.log(values);
+    // const res = await axios.post("http://localhost:5001/api/1.0/auth", values);
+    // console.log(res);
     setOpen(false);
     resetField("email");
     resetField("password");
@@ -52,8 +49,15 @@ const SignupRegisterModal = ({ open, setOpen }) => {
         }}
       >
         <form onSubmit={handleSubmit(submitLoginData)}>
-          {isLogin ? <LoginForm register={register} errors={errors} /> : <RegisterForm register={register} errors={errors} />}
-          <Box sx={{ cursor: "pointer", mt: 3 }} onClick={() => setIsLogin(!isLogin)}>
+          {isLogin ? (
+            <LoginForm register={register} errors={errors} />
+          ) : (
+            <RegisterForm register={register} errors={errors} />
+          )}
+          <Box
+            sx={{ cursor: "pointer", mt: 3 }}
+            onClick={() => setIsLogin(!isLogin)}
+          >
             {isLogin ? (
               <Typography>Don't have an account? Click to register.</Typography>
             ) : (

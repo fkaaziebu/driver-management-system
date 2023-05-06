@@ -1,4 +1,4 @@
-import { Button, Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import React from "react";
 
 function LoginForm({ register, errors }) {
@@ -44,6 +44,39 @@ function LoginForm({ register, errors }) {
         />
         <p>{errors.password?.message}</p>
       </div>
+      <Box sx={{ mt: 2, mb: 2 }}>
+        <div className="form-check">
+          <input
+            className="form-check-input"
+            type="radio"
+            name="driver-admin"
+            id="admin"
+            checked
+          />
+          <label className="form-check-label" for="admin">
+            <Typography
+              sx={{ fontSize: 20, fontFamily: "Poppins", fontWeight: "400" }}
+            >
+              Login as Admin
+            </Typography>
+          </label>
+        </div>
+        <div className="form-check">
+          <input
+            className="form-check-input"
+            type="radio"
+            name="driver-admin"
+            id="driver"
+          />
+          <label className="form-check-label" for="driver">
+            <Typography
+              sx={{ fontSize: 20, fontFamily: "Poppins", fontWeight: "400" }}
+            >
+              Login as Driver
+            </Typography>
+          </label>
+        </div>
+      </Box>
       <Button
         type="submit"
         variant="contained"
