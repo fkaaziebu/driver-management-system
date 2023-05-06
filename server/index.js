@@ -6,4 +6,4 @@ sequelize.sync({ force: true });
 
 TokenService.scheduleCleanup();
 
-app.listen(3001, () => console.log("App is running!"));
+app.listen(5001, () => console.log("App is running!"));
