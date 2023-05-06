@@ -1,4 +1,5 @@
 import { useState } from "react";
+import DriverProfileCompletion from "scenes/driverProfileCompletion";
 import {
   Box,
   Button,
