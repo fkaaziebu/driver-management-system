@@ -34,6 +34,7 @@ const SignupRegisterModal = ({ open, setOpen }) => {
       onClose={() => setOpen(false)}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
+      sx={{ overflowY: "auto" }}
     >
       <Box
         sx={{

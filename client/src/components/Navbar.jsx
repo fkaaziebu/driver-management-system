@@ -15,6 +15,7 @@ function Navbar() {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
+        // position: "fixed"
       }}
     >
       <FlexBetween width="90%" padding="1rem">
