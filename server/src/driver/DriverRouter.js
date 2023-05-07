@@ -4,7 +4,7 @@ const DriverService = require("./DriverService");
 const ValidationException = require("../error/ValidationException");
 const en = require("../../locales/en/translation.json");
 const ForbiddenException = require("../error/ForbiddenException");
-
+const FileService = require("../file/FileService");
 const router = express.Router();
 
 /* DRIVER REGISTRATION ROUTE */
@@ -103,13 +103,19 @@ router.put(
     .bail()
     .isLength({ min: 4, max: 32 })
     .withMessage(en.username_size),
-  check("image").custom((imageAsBase64String) => {
+  check("image").custom(async (imageAsBase64String) => {
     if (!imageAsBase64String) {
-      return true
+      return true;
     }
     const buffer = Buffer.from(imageAsBase64String, "base64");
-    if (buffer.length > 2 * 1024 * 1024) {
+    if (!FileService.isLessThan2MB(buffer)) {
       throw new Error(en.profile_image_size);
+    }
+
+    // Check for file type
+    const supoortedType = await FileService.isSupportedFileType(buffer);
+    if (!supoortedType) {
+      throw new Error(en.unsupported_image_file);
     }
     return true;
   }),
