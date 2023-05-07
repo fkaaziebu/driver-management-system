@@ -29,6 +29,7 @@ const save = async (body) => {
 };
 
 const findByEmail = async (email) => {
+  // Finds and returns the user with this particular email
   return await Driver.findOne({ where: { email: email } });
 };
 
@@ -54,12 +55,16 @@ const getUser = async (id) => {
 };
 
 const updateUser = async (id, updatedBody) => {
+  // Find the Driver with this particular id
   const user = await Driver.findOne({ where: { id: id } });
+  // Update their fields
   user.username = updatedBody.username;
+  // Save the field after the update
   await user.save();
 };
 
 const deleteUser = async (id) => {
+  // Remove driver with this id from Driver table
   await Driver.destroy({ where: { id: id } });
 };
 
