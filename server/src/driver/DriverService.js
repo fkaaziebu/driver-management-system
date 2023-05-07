@@ -60,7 +60,12 @@ const updateUser = async (id, updatedBody) => {
   const user = await Driver.findOne({ where: { id: id } });
   // Update their fields
   user.username = updatedBody.username;
-  user.image = await FileService.saveProfileImage(updatedBody.image || "");
+  if (updatedBody.image) {
+    if (user.image) {
+      await FileService.deleteProfileImage(user.image);
+    }
+    user.image = await FileService.saveProfileImage(updatedBody.image);
+  }
   // Save the field after the update
   await user.save();
   return {
@@ -68,7 +73,7 @@ const updateUser = async (id, updatedBody) => {
     username: user.username,
     email: user.email,
     image: user.image,
-  }
+  };
 };
 
 const deleteUser = async (id) => {

@@ -118,11 +118,11 @@ describe("Driver Registration", () => {
   it.each`
     field         | value              | expectedMessage
     ${"username"} | ${null}            | ${en.username_null}
+    ${"username"} | ${"usr"}           | ${en.username_size}
+    ${"username"} | ${"a".repeat(33)}  | ${en.username_size}
     ${"email"}    | ${null}            | ${en.email_null}
     ${"contact"}  | ${null}            | ${en.contact_null}
     ${"password"} | ${null}            | ${en.password_null}
-    ${"username"} | ${"usr"}           | ${en.username_size}
-    ${"username"} | ${"a".repeat(33)}  | ${en.username_size}
     ${"email"}    | ${"mail.com"}      | ${en.email_invalid}
     ${"email"}    | ${"user.mail.com"} | ${en.email_invalid}
     ${"email"}    | ${"user@mail"}     | ${en.email_invalid}

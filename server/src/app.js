@@ -19,7 +19,7 @@ FileService.createFolders();
 const app = express();
 
 /* MIDDLEWARE CONFIGS */
-app.use(express.json());
+app.use(express.json({ limit: "3mb" }));
 
 app.use(
   "/images",
@@ -31,9 +31,12 @@ app.use(cors());
 
 /* ROUTES */
 app.use(tokenAuthentication);
+
 app.use(DriverRouter);
+
 app.use(AuthenticationRouter);
 
+/* ERROR HANDLER */
 app.use(ErrorHandler);
 
 module.exports = app;

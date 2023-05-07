@@ -95,22 +95,49 @@ router.post("/api/1.0/drivers/token/:token", async (req, res, next) => {
 });
 
 /* DRIVER UPDATE ROUTE */
-router.put("/api/1.0/drivers/:id", async (req, res, next) => {
-  // Check whether the request has an authenticated user
-  const authenticatedUser = req.authenticatedUser;
+router.put(
+  "/api/1.0/drivers/:id",
+  check("username")
+    .notEmpty()
+    .withMessage(en.username_null)
+    .bail()
+    .isLength({ min: 4, max: 32 })
+    .withMessage(en.username_size),
+  check("image").custom((imageAsBase64String) => {
+    if (!imageAsBase64String) {
+      return true
+    }
+    const buffer = Buffer.from(imageAsBase64String, "base64");
+    if (buffer.length > 2 * 1024 * 1024) {
+      throw new Error(en.profile_image_size);
+    }
+    return true;
+  }),
+  async (req, res, next) => {
+    // Check whether the request has an authenticated user
+    const authenticatedUser = req.authenticatedUser;
 
-  // If authenticated user does not exist or the id of that user does not match the req params id
-  // we return an error body
-  if (!authenticatedUser || authenticatedUser.id != req.params.id) {
-    // Custom error body for Forbidden request, which means only this particular
-    // user can update his details
-    return next(new ForbiddenException(en.unauthorized_user_update));
+    // If authenticated user does not exist or the id of that user does not match the req params id
+    // we return an error body
+    if (!authenticatedUser || authenticatedUser.id != req.params.id) {
+      // Custom error body for Forbidden request, which means only this particular
+      // user can update his details
+      return next(new ForbiddenException(en.unauthorized_user_update));
+    }
+    // Get errors as a result of username validation
+    const errors = validationResult(req);
+    // If Errors occur as a result of validation
+    // return an appropriate error message to frontend
+    if (!errors.isEmpty()) {
+      // Error handler for validation issues
+      return next(new ValidationException(errors.array()));
+    }
+    // If Driver is authenticated properly
+    // Update his details using the request body
+    const user = await DriverService.updateUser(req.params.id, req.body);
+    return res.send(user);
   }
-  // If Driver is authenticated properly
-  // Update his details using the request body
-  const user = await DriverService.updateUser(req.params.id, req.body);
-  return res.send(user);
-});
+);
 
 /* DRIVER DELETE ROUTE */
 router.delete("/api/1.0/drivers/:id", async (req, res, next) => {

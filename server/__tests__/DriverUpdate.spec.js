@@ -163,4 +163,92 @@ describe("Driver update", () => {
     const profileImagePath = path.join(profileDirectory, inDBUser.image);
     expect(fs.existsSync(profileImagePath)).toBe(true);
   });
+  it("removes the old image after user uploads new one", async () => {
+    const fileInBase64 = readFileAsBase64();
+    const savedUser = await addUser();
+    const validUpdate = { username: "user1-updated", image: fileInBase64 };
+    const response = await putUser(savedUser.id, validUpdate, {
+      auth: { email: "user1@mail.com", password: "P4ssword" },
+    });
+
+    const firstImage = response.body.image;
+
+    await putUser(savedUser.id, validUpdate, {
+      auth: { email: "user1@mail.com", password: "P4ssword" },
+    });
+
+    const profileImagePath = path.join(profileDirectory, firstImage);
+    expect(fs.existsSync(profileImagePath)).toBe(false);
+  });
+  it.each`
+    value             | message
+    ${null}           | ${en.username_null}
+    ${"usr"}          | ${en.username_size}
+    ${"a".repeat(33)} | ${en.username_size}
+  `(
+    "returns $message when username is updated with $value",
+    async ({ value, message }) => {
+      const savedUser = await addUser();
+      const invalidUpdate = { username: value };
+      const response = await putUser(savedUser.id, invalidUpdate, {
+        auth: { email: "user1@mail.com", password: "P4ssword" },
+      });
+      expect(response.status).toBe(400);
+      expect(response.body.validationErrors.username).toBe(message);
+    }
+  );
+  it("returns 200 when image size is exactly 2MB", async () => {
+    const fileWithSize2MB = "a".repeat(1024 * 1024 * 2);
+    const base64 = Buffer.from(fileWithSize2MB).toString("base64");
+    const savedUser = await addUser();
+    const validUpdate = { username: "updated-user", image: base64 };
+    const response = await putUser(savedUser.id, validUpdate, {
+      auth: { email: savedUser.email, password: "P4ssword" },
+    });
+    expect(response.status).toBe(200);
+  });
+  it("returns 400 when image size exceds 2mb", async () => {
+    const fileWithSize2MB = "a".repeat(1024 * 1024 * 2) + "a";
+    const base64 = Buffer.from(fileWithSize2MB).toString("base64");
+    const savedUser = await addUser();
+    const invalidUpdate = { username: "updated-user", image: base64 };
+    const response = await putUser(savedUser.id, invalidUpdate, {
+      auth: { email: savedUser.email, password: "P4ssword" },
+    });
+    expect(response.status).toBe(400);
+  });
+  it("keeps the old image after user only updates useername", async () => {
+    const fileInBase64 = readFileAsBase64();
+    const savedUser = await addUser();
+    const validUpdate = { username: "user1-updated", image: fileInBase64 };
+    const response = await putUser(savedUser.id, validUpdate, {
+      auth: { email: "user1@mail.com", password: "P4ssword" },
+    });
+
+    const firstImage = response.body.image;
+
+    await putUser(
+      savedUser.id,
+      { username: "user1-updated2" },
+      {
+        auth: { email: "user1@mail.com", password: "P4ssword" },
+      }
+    );
+
+    const profileImagePath = path.join(profileDirectory, firstImage);
+    expect(fs.existsSync(profileImagePath)).toBe(true);
+
+    const userInDb = await Driver.findOne({ where: { id: savedUser.id } });
+    expect(userInDb.image).toBe(firstImage);
+  });
+  it(`returns ${en.profile_image_size} when file size exceeds 2mb`, async () => {
+    const fileWithSize2MB = "a".repeat(1024 * 1024 * 2) + "a";
+    const base64 = Buffer.from(fileWithSize2MB).toString("base64");
+    const savedUser = await addUser();
+    const invalidUpdate = { username: "updated-user", image: base64 };
+    const response = await putUser(savedUser.id, invalidUpdate, {
+      auth: { email: savedUser.email, password: "P4ssword" },
+    });
+    expect(response.body.validationErrors.image).toBe(en.profile_image_size);
+  });
 });
