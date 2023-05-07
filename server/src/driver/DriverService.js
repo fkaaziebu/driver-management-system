@@ -6,6 +6,7 @@ const EmailException = require("../email/EmailException");
 const InvalidTokenException = require("./InvalidTokenException");
 const NotFoundException = require("../error/NotFoundException");
 const { randomString } = require("../shared/generator");
+const FileService = require("../file/FileService");
 
 const save = async (body) => {
   const { username, email, contact, password } = body;
@@ -46,7 +47,7 @@ const activate = async (token) => {
 const getUser = async (id) => {
   const user = await Driver.findOne({
     where: { id: id, inactive: false },
-    attributes: ["id", "username", "email"],
+    attributes: ["id", "username", "email", "image"],
   });
   if (!user) {
     throw new NotFoundException("User not found");
@@ -59,8 +60,15 @@ const updateUser = async (id, updatedBody) => {
   const user = await Driver.findOne({ where: { id: id } });
   // Update their fields
   user.username = updatedBody.username;
+  user.image = await FileService.saveProfileImage(updatedBody.image || "");
   // Save the field after the update
   await user.save();
+  return {
+    id: id,
+    username: user.username,
+    email: user.email,
+    image: user.image,
+  }
 };
 
 const deleteUser = async (id) => {

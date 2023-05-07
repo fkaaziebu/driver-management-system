@@ -4,10 +4,8 @@ const DriverService = require("./DriverService");
 const ValidationException = require("../error/ValidationException");
 const en = require("../../locales/en/translation.json");
 const ForbiddenException = require("../error/ForbiddenException");
-const tokenAuthentication = require("../middleware/tokenAuthentication");
 
 const router = express.Router();
-
 
 /* DRIVER REGISTRATION ROUTE */
 router.post(
@@ -75,7 +73,6 @@ router.post(
   }
 );
 
-
 /* TOKEN ACTIVATION ROUTE */
 router.post("/api/1.0/drivers/token/:token", async (req, res, next) => {
   // Get the token passed as params in the route
@@ -97,7 +94,6 @@ router.post("/api/1.0/drivers/token/:token", async (req, res, next) => {
   }
 });
 
-
 /* DRIVER UPDATE ROUTE */
 router.put("/api/1.0/drivers/:id", async (req, res, next) => {
   // Check whether the request has an authenticated user
@@ -112,10 +108,9 @@ router.put("/api/1.0/drivers/:id", async (req, res, next) => {
   }
   // If Driver is authenticated properly
   // Update his details using the request body
-  await DriverService.updateUser(req.params.id, req.body);
-  return res.send();
+  const user = await DriverService.updateUser(req.params.id, req.body);
+  return res.send(user);
 });
-
 
 /* DRIVER DELETE ROUTE */
 router.delete("/api/1.0/drivers/:id", async (req, res, next) => {

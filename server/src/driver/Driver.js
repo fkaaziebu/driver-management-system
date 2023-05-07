@@ -27,6 +27,9 @@ Driver.init(
     activationToken: {
       type: Sequelize.STRING,
     },
+    image: {
+      type: Sequelize.STRING,
+    },
   },
   { sequelize, modelName: "driver" }
 );

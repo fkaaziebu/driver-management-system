@@ -4,6 +4,12 @@ const Driver = require("../src/driver/Driver");
 const sequelize = require("../src/config/database");
 const bcrypt = require("bcrypt");
 const en = require("../locales/en/translation.json");
+const fs = require("fs");
+const path = require("path");
+const config = require("config");
+
+const { uploadDir, profileDir } = config;
+const profileDirectory = path.join(".", uploadDir, profileDir);
 
 // Before any test runs
 beforeAll(async () => {
@@ -14,6 +20,7 @@ beforeAll(async () => {
 beforeEach(async () => {
   await Driver.destroy({ truncate: true });
 });
+
 const activeUser = {
   username: "user1",
   email: "user1@mail.com",
@@ -45,6 +52,11 @@ const putUser = async (id = 5, body = null, options = {}) => {
     agent.set("Authorization", `Bearer ${options.token}`);
   }
   return await agent.send(body);
+};
+
+const readFileAsBase64 = () => {
+  const filePath = path.join(".", "__tests__", "resources", "test-png.png");
+  return fs.readFileSync(filePath, { encoding: "base64" });
 };
 
 describe("Driver update", () => {
@@ -114,5 +126,41 @@ describe("Driver update", () => {
   it("returns 403 when token is not valid", async () => {
     const response = await putUser(5, null, { token: "123" });
     expect(response.status).toBe(403);
+  });
+  it("saves the driver image when update contains image as base64", async () => {
+    const filePath = path.join(".", "__tests__", "resources", "test-png.png");
+    const fileInBase64 = fs.readFileSync(filePath, { encoding: "base64" });
+    const savedUser = await addUser();
+    const validUpdate = { username: "user1-updated", image: fileInBase64 };
+    await putUser(savedUser.id, validUpdate, {
+      auth: { email: "user1@mail.com", password: "P4ssword" },
+    });
+    const inDBUser = await Driver.findOne({ where: { id: savedUser.id } });
+    expect(inDBUser.image).toBeTruthy();
+  });
+  it("returns success body having only id, username, email and image", async () => {
+    const fileInBase64 = readFileAsBase64();
+    const savedUser = await addUser();
+    const validUpdate = { username: "user1-updated", image: fileInBase64 };
+    const response = await putUser(savedUser.id, validUpdate, {
+      auth: { email: "user1@mail.com", password: "P4ssword" },
+    });
+    expect(Object.keys(response.body)).toEqual([
+      "id",
+      "username",
+      "email",
+      "image",
+    ]);
+  });
+  it("saves the driver image to upload folder and stores filename to driver  when update has image", async () => {
+    const fileInBase64 = readFileAsBase64();
+    const savedUser = await addUser();
+    const validUpdate = { username: "user1-updated", image: fileInBase64 };
+    await putUser(savedUser.id, validUpdate, {
+      auth: { email: "user1@mail.com", password: "P4ssword" },
+    });
+    const inDBUser = await Driver.findOne({ where: { id: savedUser.id } });
+    const profileImagePath = path.join(profileDirectory, inDBUser.image);
+    expect(fs.existsSync(profileImagePath)).toBe(true);
   });
 });

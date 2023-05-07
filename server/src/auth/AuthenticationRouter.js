@@ -53,7 +53,12 @@ router.post(
     // Create token to be sent to the frontend
     const token = await TokenService.createToken(user);
     // Send token along with user id and username which will be stored for authentication purposes
-    return res.send({ id: user.id, username: user.username, token });
+    return res.send({
+      id: user.id,
+      username: user.username,
+      image: user.image,
+      token,
+    });
   }
 );
 
