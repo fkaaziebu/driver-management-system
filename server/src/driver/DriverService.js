@@ -9,7 +9,9 @@ const { randomString } = require("../shared/generator");
 const FileService = require("../file/FileService");
 
 const save = async (body) => {
+  // Get all information for creating a user from the request body
   const { username, email, contact, password } = body;
+  // create a hash of the password to be stored in the password field
   const hash = await bcrypt.hash(password, 10);
   const user = {
     username,
@@ -18,13 +20,20 @@ const save = async (body) => {
     password: hash,
     activationToken: randomString(10),
   };
+  // Call the sequelize transaction instance
+  // This tells sequelize to wait until a commit before saving user
   const transaction = await sequelize.transaction();
+  // Create a User with the above user information and wait to receive a commit
   await Driver.create(user, { transaction });
   try {
+    // Sendan email to the users email
     await EmailService.sendAccountActivation(email, user.activationToken);
+    // If email sent successfully, commit the user
     await transaction.commit();
   } catch (err) {
+    // If the email sending Failed, don't save user to database
     await transaction.rollback();
+    // Return an appropriate error body to client
     throw new EmailException();
   }
 };
@@ -35,12 +44,17 @@ const findByEmail = async (email) => {
 };
 
 const activate = async (token) => {
+  // Finds a client with this particular token
   const user = await Driver.findOne({ where: { activationToken: token } });
+  // If a user doesn't exist with this token return an invalid token error
   if (!user) {
     throw new InvalidTokenException();
   }
+  // Change the inactive field of user to false and 
+  // make the activation token field empty
   user.inactive = false;
   user.activationToken = null;
+  // save the user updated fields to database
   await user.save();
 };
 
@@ -60,14 +74,22 @@ const updateUser = async (id, updatedBody) => {
   const user = await Driver.findOne({ where: { id: id } });
   // Update their fields
   user.username = updatedBody.username;
+  /**
+   * Update the user's image only when they upload an image
+   * Old images are deleted as well to prevent storing of old images
+   */
   if (updatedBody.image) {
     if (user.image) {
+      // Delete exiting image if any
       await FileService.deleteProfileImage(user.image);
     }
+    // Save new image to folder and name to database
     user.image = await FileService.saveProfileImage(updatedBody.image);
   }
   // Save the field after the update
   await user.save();
+  // Return appropriate body after an update
+  // especially username and image since they are the ones to be updated
   return {
     id: id,
     username: user.username,

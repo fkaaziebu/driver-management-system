@@ -104,17 +104,23 @@ router.put(
     .isLength({ min: 4, max: 32 })
     .withMessage(en.username_size),
   check("image").custom(async (imageAsBase64String) => {
+    // If no image is passed in update
+    // request then return true as success
     if (!imageAsBase64String) {
       return true;
     }
+    // Get buffer of the image passed
     const buffer = Buffer.from(imageAsBase64String, "base64");
     if (!FileService.isLessThan2MB(buffer)) {
+      // Image size must not be greater than 2MB
+      // We return appropriate error body if image is greater
       throw new Error(en.profile_image_size);
     }
 
     // Check for file type
-    const supoortedType = await FileService.isSupportedFileType(buffer);
-    if (!supoortedType) {
+    const supportedType = await FileService.isSupportedFileType(buffer);
+    if (!supportedType) {
+      // Throw an error for a file which is not a supported in the system
       throw new Error(en.unsupported_image_file);
     }
     return true;
