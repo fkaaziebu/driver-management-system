@@ -16,4 +16,7 @@ module.exports = {
   },
   uploadDir: "uploads-test",
   profileDir: "profile",
+  mailConfig: {
+    from: "My App <info@my-app.com>",
+  },
 };
