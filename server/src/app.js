@@ -8,6 +8,7 @@ const tokenAuthentication = require("./middleware/tokenAuthentication");
 const FileService = require("./file/FileService");
 const config = require("config");
 const path = require("path");
+// const loggerF = require("../src/middleware/loggerF");
 
 const { uploadDir, profileDir } = config;
 const profileFolder = path.join(".", uploadDir, profileDir);
@@ -38,5 +39,7 @@ app.use(AuthenticationRouter);
 
 /* ERROR HANDLER */
 app.use(ErrorHandler);
+
+// app.use(loggerF);
 
 module.exports = app;
