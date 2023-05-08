@@ -5,6 +5,7 @@ const ValidationException = require("../error/ValidationException");
 const en = require("../../locales/en/translation.json");
 const ForbiddenException = require("../error/ForbiddenException");
 const FileService = require("../file/FileService");
+const loggerF = require("../logs/loggerF");
 const router = express.Router();
 
 /* DRIVER REGISTRATION ROUTE */
@@ -48,6 +49,8 @@ router.post(
     .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).*$/)
     .withMessage(en.password_pattern),
   async (req, res, next) => {
+    // Logging All Request coming to this endpoint
+    loggerF("", req);
     const errors = validationResult(req);
     // If Errors occur as a result of validation
     // return an appropriate error message to frontend
@@ -75,6 +78,8 @@ router.post(
 
 /* TOKEN ACTIVATION ROUTE */
 router.post("/api/1.0/drivers/token/:token", async (req, res, next) => {
+  // Logging All Request coming to this endpoint
+  loggerF("", req);
   // Get the token passed as params in the route
   const token = req.params.token;
 
@@ -126,6 +131,8 @@ router.put(
     return true;
   }),
   async (req, res, next) => {
+    // Logging All Request coming to this endpoint
+    loggerF("", req);
     // Check whether the request has an authenticated user
     const authenticatedUser = req.authenticatedUser;
 
@@ -153,6 +160,8 @@ router.put(
 
 /* DRIVER DELETE ROUTE */
 router.delete("/api/1.0/drivers/:id", async (req, res, next) => {
+  // Logging All Request coming to this endpoint
+  loggerF("", req);
   // Check whether the request has an authenticated user
   const authenticatedUser = req.authenticatedUser;
 

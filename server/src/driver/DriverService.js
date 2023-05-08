@@ -31,7 +31,6 @@ const save = async (body) => {
     // If email sent successfully, commit the user
     await transaction.commit();
   } catch (err) {
-    console.log(err);
     // If the email sending Failed, don't save user to database
     await transaction.rollback();
     // Return an appropriate error body to client

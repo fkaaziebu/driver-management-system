@@ -19,4 +19,6 @@ module.exports = {
   mailConfig: {
     from: "haaziebu@gmail.com",
   },
+  logFileName: "app-dev.log",
+  logFolderName: "logs-dev/"
 };

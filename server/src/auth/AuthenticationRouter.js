@@ -6,6 +6,7 @@ const bcrypt = require("bcrypt");
 const ForbiddenException = require("../error/ForbiddenException");
 const { check, validationResult } = require("express-validator");
 const TokenService = require("./TokenService");
+const loggerF = require("../logs/loggerF");
 
 const router = express.Router();
 
@@ -19,6 +20,8 @@ router.post(
   // email validation using express
   check("email").isEmail(),
   async (req, res, next) => {
+    // Logging All Request coming to this endpoint
+    loggerF("", req);
     // Checking for validation errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -64,6 +67,8 @@ router.post(
 
 /* LOGOUT ROUTE */
 router.post("/api/1.0/logout", async (req, res) => {
+  // Logging All Request coming to this endpoint
+  loggerF("", req);
   // Check for an authorization header
   const authorization = req.headers.authorization;
   if (authorization) {

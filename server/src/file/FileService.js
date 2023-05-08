@@ -2,13 +2,16 @@ const fs = require("fs");
 const path = require("path");
 const config = require("config");
 const { randomString } = require("../shared/generator");
-const FileType = require("file-type")
+const FileType = require("file-type");
 
-const { uploadDir, profileDir } = config;
+const { uploadDir, profileDir, logFileName } = config;
 
 const createFolders = () => {
   if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir);
+  }
+  if (!fs.existsSync(logFileName)) {
+    fs.writeFile(logFileName, "");
   }
   const profileFolder = path.join(".", uploadDir, profileDir);
   if (!fs.existsSync(profileFolder)) {
@@ -48,4 +51,10 @@ const isSupportedFileType = async (buffer) => {
     : type.mime === "image/png" || type.mime === "image/jpeg";
 };
 
-module.exports = { createFolders, saveProfileImage, deleteProfileImage, isLessThan2MB, isSupportedFileType };
+module.exports = {
+  createFolders,
+  saveProfileImage,
+  deleteProfileImage,
+  isLessThan2MB,
+  isSupportedFileType,
+};

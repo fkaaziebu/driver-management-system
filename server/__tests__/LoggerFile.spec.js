@@ -1,11 +1,14 @@
 const fs = require("fs");
+const config = require("config");
+
+const { logFileName } = config;
 
 describe("createFolders", () => {
-  it("creates logger file of app.log ones application starts", () => {
-    expect(fs.existsSync("app.log")).toBe(true);
+  it(`creates logger file of ${logFileName} ones application starts`, () => {
+    expect(fs.existsSync(logFileName)).toBe(true);
   });
   it("checks for logs in app.log", () => {
-    console.log(fs.readFileSync("app.log").length);
-    expect(fs.readFileSync("app.log").length).toBeGreaterThan(1);
+    console.log(fs.readFileSync(logFileName).length);
+    expect(fs.readFileSync(logFileName).length).toBeGreaterThan(1);
   });
 });

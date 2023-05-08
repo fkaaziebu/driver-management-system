@@ -7,7 +7,7 @@ const config = require("config");
 const { uploadDir, profileDir } = config;
 const profileFolder = path.join(".", uploadDir, profileDir);
 
-describe("Profiel Images", () => {
+describe("Profile Images", () => {
   const copyFile = () => {
     const filePath = path.join(".", "__tests__", "resources", "test-png.png");
     const storedFileName = "test-file";

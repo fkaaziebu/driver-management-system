@@ -1,7 +1,5 @@
-const loggerF = require("../middleware/loggerF");
+const loggerF = require("../logs/loggerF");
 module.exports = (err, req, res, next) => {
-  loggerF.info(`${req.url}\t${req.method}`);
-  loggerF.error(message);
   const { status, message, errors } = err;
   let validationErrors;
   if (errors) {
@@ -10,6 +8,7 @@ module.exports = (err, req, res, next) => {
       validationErrors[error.path] = error.msg;
     });
   }
+  loggerF(err, req);
   res.status(status).send({
     path: req.originalUrl,
     timestamp: new Date().getTime(),

@@ -6,7 +6,7 @@ const config = require("config");
 const { uploadDir, profileDir } = config;
 
 describe("createFolders", () => {
-  it("creates upload folder", () => {
+  it("creates upload folder and logs file", () => {
     FileService.createFolders();
     expect(fs.existsSync(uploadDir));
   });
