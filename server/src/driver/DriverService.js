@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 const EmailService = require("../email/EmailService");
 const sequelize = require("../config/database");
 const EmailException = require("../email/EmailException");
-const InvalidTokenException = require("./InvalidTokenException");
+const InvalidTokenException = require("../error/InvalidTokenException");
 const NotFoundException = require("../error/NotFoundException");
 const { randomString } = require("../shared/generator");
 const FileService = require("../file/FileService");
@@ -13,6 +13,7 @@ const save = async (body) => {
   const { username, email, contact, password } = body;
   // create a hash of the password to be stored in the password field
   const hash = await bcrypt.hash(password, 10);
+  // Create a serialized object of user to store
   const user = {
     username,
     email,
@@ -27,7 +28,7 @@ const save = async (body) => {
   await Driver.create(user, { transaction });
   try {
     // Sendan email to the users email
-    await EmailService.sendAccountActivation(email, user.activationToken);
+    await EmailService.sendAccountActivationDriver(email, user.activationToken);
     // If email sent successfully, commit the user
     await transaction.commit();
   } catch (err) {

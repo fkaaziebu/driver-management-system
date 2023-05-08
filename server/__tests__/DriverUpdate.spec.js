@@ -39,7 +39,7 @@ const putUser = async (id = 5, body = null, options = {}) => {
 
   let token;
   if (options.auth) {
-    const response = await agent.post("/api/1.0/auth").send(options.auth);
+    const response = await agent.post("/api/1.0/auth/drivers").send(options.auth);
     token = response.body.token;
   }
 

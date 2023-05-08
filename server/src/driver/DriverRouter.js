@@ -76,7 +76,7 @@ router.post(
   }
 );
 
-/* TOKEN ACTIVATION ROUTE */
+/* DRIVER ACTIVATION ROUTE */
 router.post("/api/1.0/drivers/token/:token", async (req, res, next) => {
   // Logging All Request coming to this endpoint
   loggerF("", req);

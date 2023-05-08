@@ -16,7 +16,7 @@ const router = express.Router();
  * It checks whether the user details are correct and generates a random token for that user
  */
 router.post(
-  "/api/1.0/auth",
+  "/api/1.0/auth/drivers",
   // email validation using express
   check("email").isEmail(),
   async (req, res, next) => {

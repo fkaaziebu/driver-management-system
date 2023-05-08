@@ -32,7 +32,7 @@ const auth = async (options = {}) => {
   let token;
   if (options.auth) {
     const response = await request(app)
-      .post("/api/1.0/auth")
+      .post("/api/1.0/auth/drivers")
       .send(options.auth);
     token = response.body.token;
   }

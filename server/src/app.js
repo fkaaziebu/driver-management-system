@@ -1,6 +1,7 @@
 const express = require("express");
 const DriverRouter = require("./driver/DriverRouter.js");
 const AuthenticationRouter = require("./auth/AuthenticationRouter.js");
+const AdminRouter = require("./admin/AdminRouter.js")
 const cors = require("cors");
 const helmet = require("helmet");
 const ErrorHandler = require("./error/ErrorHandler.js");
@@ -33,6 +34,8 @@ app.use(cors());
 app.use(tokenAuthentication);
 
 app.use(DriverRouter);
+
+app.use(AdminRouter);
 
 app.use(AuthenticationRouter);
 

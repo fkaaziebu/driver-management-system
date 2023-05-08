@@ -29,7 +29,7 @@ const addUser = async (user = { ...activeUser }) => {
 };
 
 const postAuthentication = async (credentials) => {
-  return await request(app).post("/api/1.0/auth").send(credentials);
+  return await request(app).post("/api/1.0/auth/drivers").send(credentials);
 };
 
 const postLogout = async (options = {}) => {
@@ -79,7 +79,7 @@ describe("Authentication", () => {
       password: "P4ssword",
     });
     const error = response.body;
-    expect(error.path).toBe("/api/1.0/auth");
+    expect(error.path).toBe("/api/1.0/auth/drivers");
     expect(error.timestamp).toBeGreaterThan(nowInMillis);
     expect(Object.keys(error)).toEqual(["path", "timestamp", "message"]);
   });
@@ -113,7 +113,7 @@ describe("Authentication", () => {
       email: "user1@mail.com",
       password: "P4ssword",
     });
-    expect(response.body.path).toBe("/api/1.0/auth");
+    expect(response.body.path).toBe("/api/1.0/auth/drivers");
     expect(response.body.timestamp).toBeGreaterThan(nowInMillis);
     expect(Object.keys(response.body)).toEqual([
       "path",
