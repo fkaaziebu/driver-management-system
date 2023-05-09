@@ -1,78 +1,94 @@
+// Importing React and various components from the Material-UI library
 import React from "react";
-import { Box, Button, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Typography,
+  useTheme,
+  useMediaQuery,
+} from "@mui/material";
+// Importing a custom component called "FlexBetween"
 import FlexBetween from "components/FlexBetween";
+// Importing an image to be displayed on the landing page
 import AdvertizingImage from "../../assets/image-removebg-preview.png";
 
+// Defining the "LandingPage" component
 function LandingPage() {
+  // Getting the current theme and screen size using React hooks
+  const theme = useTheme();
+  const isXsScreen = useMediaQuery(theme.breakpoints.only("xs"));
+  const isSmScreen = useMediaQuery(theme.breakpoints.only("sm"));
+  const isMdScreen = useMediaQuery(theme.breakpoints.only("md"));
+  const isLgScreen = useMediaQuery(theme.breakpoints.only("lg"));
+  const isXlScreen = useMediaQuery(theme.breakpoints.only("xl"));
+
+  // Returning the JSX for the landing page
   return (
     <Box sx={{ width: "100%", backgroundColor: "rgba(183, 183, 183, 0.1)" }}>
-      <FlexBetween padding="2rem" gap="2.5rem">
+      {/* Using the "FlexBetween" component to create a responsive layout */}
+      <FlexBetween
+        padding={isXsScreen ? "1rem" : isSmScreen ? "1.5rem" : "2rem"}
+        flexDirection={isXsScreen ? "column-reverse" : "row"}
+        gap={isXsScreen ? "1rem" : isSmScreen ? "1.5rem" : "2.5rem"}
+      >
+        {/* Displaying the advertising image */}
         <Box
           component="img"
           src={AdvertizingImage}
           alt="Advertising Image"
           sx={{
-            width: "65vw",
-            height: "70vh",
-            borderBottomRightRadius: "50%",
-            border: "5px solid #19A7CE",
+            width: isXsScreen ? "100%" : isSmScreen ? "80%" : "65vw",
+            height: isXsScreen ? "40vh" : isSmScreen ? "50vh" : "70vh",
+            borderBottomRightRadius: isXsScreen ? "0" : "50%",
+            border: isXsScreen ? "none" : "5px solid #19A7CE",
           }}
         />
+        {/* Displaying a heading and some text */}
         <Box
           sx={{
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
             flexDirection: "column",
-            gap: "2rem",
+            gap: isXsScreen ? "1rem" : "2rem",
           }}
         >
-          <Typography variant="h1">What we do.</Typography>
-          <Box sx={{ fontSize: "1.5rem" }}>
+          <Typography variant={isXsScreen ? "h2" : "h1"}>
+            What we do.
+          </Typography>
+          <Box sx={{ fontSize: isXsScreen ? "1rem" : "1.5rem" }}>
             Lorem ipsum dolor sit amet consectetur adipisicing elit. Quaerat,
-            consectetur velit. A tempora laboriosam perferendis? Esse quaerat
-            ipsam illo fuga velit dolorum vitae veritatis aspernatur! Vel
-            dignissimos quia, a nulla dolor dicta nemo saepe, facere mollitia ut
-            magnam voluptate! Tenetur sed ipsam, dolorem distinctio unde quidem
-            sapiente quia quae totam?
+            consectetur velit. A tempora laboriosam perferendis?
           </Box>
         </Box>
       </FlexBetween>
+      {/* Displaying a heading and two buttons for registration */}
       <Box
         sx={{
           display: "flex",
           justifyContent: "flex-end",
           alignItems: "center",
-          padding: "0 0 1.5rem 0",
+          padding: isXsScreen ? "0.5rem" : "0 0 1.5rem 0",
         }}
       >
-        <Typography variant="h1" sx={{ fontStyle: "italic" }}>
+        <Typography
+          variant={isXsScreen ? "h3" : "h1"}
+          sx={{ fontStyle: "italic" }}
+        >
           Register as:
         </Typography>
-        <FlexBetween gap="2rem" padding="0 1.5rem">
+        <FlexBetween gap={isXsScreen ? "1rem" : "2rem"}>
           <Button
-            size="large"
             variant="contained"
-            sx={{
-              fontSize: 20,
-              fontFamily: "Poppins",
-              fontWeight: "500",
-              backgroundColor: "#19A7CE",
-              boxShadow: "none",
-            }}
+            size="large"
+            sx={{ backgroundColor: "#19A7CE" }}
           >
             Administrator
           </Button>
           <Button
             variant="contained"
             size="large"
-            sx={{
-              fontSize: 20,
-              fontFamily: "Poppins",
-              fontWeight: "500",
-              backgroundColor: "#19A7CE",
-              boxShadow: "none",
-            }}
+            sx={{ backgroundColor: "#19A7CE" }}
           >
             Driver
           </Button>
