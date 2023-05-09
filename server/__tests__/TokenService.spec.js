@@ -1,13 +1,13 @@
 const sequelize = require("../src/config/database");
-const Token = require("../src/auth/Token");
-const TokenService = require("../src/auth/TokenService");
+const DriverToken = require("../src/auth/DriverToken");
+const DriverTokenService = require("../src/auth/DriverTokenService");
 
 beforeAll(async () => {
   await sequelize.sync();
 });
 
 beforeEach(async () => {
-  await Token.destroy({ truncate: true });
+  await DriverToken.destroy({ truncate: true });
 });
 
 describe("Scheduled Token Cleanup", () => {
@@ -15,14 +15,14 @@ describe("Scheduled Token Cleanup", () => {
     jest.useFakeTimers();
     const token = "test-token";
     const eightDaysAgo = new Date(Date.now() - 8 * 24 * 60 * 60 * 1000);
-    await Token.create({
+    await DriverToken.create({
       token: token,
       lastUsedAt: eightDaysAgo,
     });
 
-    TokenService.scheduleCleanup();
+    DriverTokenService.scheduleCleanup();
     jest.advanceTimersByTime(60 * 60 * 1000 + 5000)
-    const tokenInDB = await Token.findOne({ where: { token: token } });
+    const tokenInDB = await DriverToken.findOne({ where: { token: token } });
     expect(tokenInDB).toBeNull();
   });
 });

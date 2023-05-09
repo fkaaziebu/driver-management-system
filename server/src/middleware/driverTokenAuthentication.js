@@ -1,7 +1,7 @@
-const TokenService = require("../auth/TokenService");
+const TokenService = require("../auth/DriverTokenService");
 
 // This runs anytime a request is sent to any of the routes
-const tokenAuthentication = async (req, res, next) => {
+const driverTokenAuthentication = async (req, res, next) => {
   // Check for authorization headers if any
   const authorization = req.headers.authorization;
   // If authorization headers included we proceed
@@ -31,4 +31,4 @@ const tokenAuthentication = async (req, res, next) => {
   next();
 };
 
-module.exports = tokenAuthentication;
+module.exports = driverTokenAuthentication;

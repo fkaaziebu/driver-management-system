@@ -1,6 +1,6 @@
 const Sequelize = require("sequelize");
 const sequelize = require("../config/database");
-const Token = require("../auth/Token");
+const AdminToken = require("../auth/AdminToken");
 
 const Model = Sequelize.Model;
 
@@ -43,6 +43,6 @@ Admin.init(
   { sequelize, modelName: "admin" }
 );
 
-Admin.hasMany(Token, { onDelete: "cascade", foreignKey: "userId" });
+Admin.hasMany(AdminToken, { onDelete: "cascade", foreignKey: "userId" });
 
 module.exports = Admin;

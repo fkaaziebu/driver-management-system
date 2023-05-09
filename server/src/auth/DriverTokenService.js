@@ -1,5 +1,5 @@
 const { randomString } = require("../shared/generator");
-const Token = require("../auth/Token");
+const DriverToken = require("./DriverToken");
 const Sequelize = require("sequelize");
 const ONE_WEEK_IN_MILLIS = 7 * 24 * 60 * 60 * 1000;
 
@@ -9,7 +9,7 @@ const createToken = async (user) => {
   // Add this token to Token table with the created token,
   // the user id who logged in and the date for the creation
   // So in future we could check for token expiration
-  await Token.create({
+  await DriverToken.create({
     token: token,
     userId: user.id,
     lastUsedAt: new Date(),
@@ -20,7 +20,7 @@ const createToken = async (user) => {
 const verify = async (token) => {
   const oneWeekAgo = new Date(Date.now() - ONE_WEEK_IN_MILLIS);
   // Check for token's less than one week old
-  const tokenInDB = await Token.findOne({
+  const tokenInDB = await DriverToken.findOne({
     where: {
       token: token,
       lastUsedAt: {
@@ -39,13 +39,13 @@ const verify = async (token) => {
 
 const deleteToken = async (token) => {
   // Get token with this token value in Token table and delete it
-  await Token.destroy({ where: { token: token } });
+  await DriverToken.destroy({ where: { token: token } });
 };
 
 const scheduleCleanup = () => {
   setInterval(async () => {
     const oneWeekAgo = new Date(Date.now() - ONE_WEEK_IN_MILLIS);
-    await Token.destroy({
+    await DriverToken.destroy({
       where: {
         lastUsedAt: {
           [Sequelize.Op.lt]: oneWeekAgo,

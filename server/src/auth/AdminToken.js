@@ -3,9 +3,9 @@ const sequelize = require("../config/database");
 
 const Model = Sequelize.Model;
 
-class Token extends Model {}
+class AdminToken extends Model {}
 
-Token.init(
+AdminToken.init(
   {
     token: {
       type: Sequelize.STRING,
@@ -14,7 +14,7 @@ Token.init(
       type: Sequelize.DATE,
     },
   },
-  { sequelize, modelName: "token", timestamps: false }
+  { sequelize, modelName: "adminToken", timestamps: false }
 );
 
-module.exports = Token;
+module.exports = AdminToken;

@@ -3,8 +3,12 @@ const AdminService = require("./AdminService");
 const en = require("../../locales/en/translation.json");
 const { check, validationResult } = require("express-validator");
 const ValidationException = require("../error/ValidationException");
+const ForbiddenException = require("../error/ForbiddenException");
+const adminTokenAuthentication = require("../middleware/adminTokenAuthentication");
 
 const router = express.Router();
+
+router.use(adminTokenAuthentication);
 
 router.post(
   "/api/1.0/admins",
@@ -114,5 +118,26 @@ router.post("/api/1.0/admins/token/:token", async (req, res, next) => {
     next(err);
   }
 });
+
+/* ADMIN UPDATE ROUTE */
+router.put(
+  "/api/1.0/admins/:id",
+  async (req, res, next) => {
+    // Check whether the request has an authenticated user
+    const authenticatedUser = req.authenticatedUser;
+
+    // If authenticated user does not exist or the id of that user does not match the req params id
+    // we return an error body
+    if (!authenticatedUser || authenticatedUser.id != req.params.id) {
+      // Custom error body for Forbidden request, which means only this particular
+      // user can update his details
+      return next(new ForbiddenException(en.unauthorized_user_update));
+    }
+    // If Admin is authenticated properly
+    // Update his details using the request body
+    const user = await AdminService.updateUser(req.params.id, req.body);
+    return res.send(user);
+  }
+);
 
 module.exports = router;

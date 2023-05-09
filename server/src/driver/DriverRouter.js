@@ -6,7 +6,11 @@ const en = require("../../locales/en/translation.json");
 const ForbiddenException = require("../error/ForbiddenException");
 const FileService = require("../file/FileService");
 const loggerF = require("../logs/loggerF");
+const driverTokenAuthentication = require("../middleware/driverTokenAuthentication");
+
 const router = express.Router();
+
+router.use(driverTokenAuthentication);
 
 /* DRIVER REGISTRATION ROUTE */
 router.post(
@@ -77,31 +81,35 @@ router.post(
 );
 
 /* DRIVER ACTIVATION ROUTE */
-router.post("/api/1.0/drivers/token/:token", async (req, res, next) => {
-  // Logging All Request coming to this endpoint
-  loggerF("", req);
-  // Get the token passed as params in the route
-  const token = req.params.token;
+router.post(
+  "/api/1.0/drivers/token/:token",
+  async (req, res, next) => {
+    // Logging All Request coming to this endpoint
+    loggerF("", req);
+    // Get the token passed as params in the route
+    const token = req.params.token;
 
-  try {
-    // Call the DriverService to activate the driver with
-    // with the provided token
-    await DriverService.activate(token);
-    // Send a success message if driver was successfully activated
-    res.send({ message: en.account_activation_success });
-  } catch (err) {
-    // Return an error message if activation failed
-    /**
-     * Errors that could occur include
-     * 1. Invalid Token
-     */
-    next(err);
+    try {
+      // Call the DriverService to activate the driver with
+      // with the provided token
+      await DriverService.activate(token);
+      // Send a success message if driver was successfully activated
+      res.send({ message: en.account_activation_success });
+    } catch (err) {
+      // Return an error message if activation failed
+      /**
+       * Errors that could occur include
+       * 1. Invalid Token
+       */
+      next(err);
+    }
   }
-});
+);
 
 /* DRIVER UPDATE ROUTE */
 router.put(
   "/api/1.0/drivers/:id",
+  driverTokenAuthentication,
   check("username")
     .notEmpty()
     .withMessage(en.username_null)
@@ -159,23 +167,27 @@ router.put(
 );
 
 /* DRIVER DELETE ROUTE */
-router.delete("/api/1.0/drivers/:id", async (req, res, next) => {
-  // Logging All Request coming to this endpoint
-  loggerF("", req);
-  // Check whether the request has an authenticated user
-  const authenticatedUser = req.authenticatedUser;
+router.delete(
+  "/api/1.0/drivers/:id",
+  driverTokenAuthentication,
+  async (req, res, next) => {
+    // Logging All Request coming to this endpoint
+    loggerF("", req);
+    // Check whether the request has an authenticated user
+    const authenticatedUser = req.authenticatedUser;
 
-  // If authenticated user does not exist or the id of that user does not match the req params id
-  // we return an error body
-  if (!authenticatedUser || authenticatedUser.id != req.params.id) {
-    // Custom error body for Forbidden request, which means only this particular
-    // user can delete himself and not anyone
-    return next(new ForbiddenException(en.unauthorized_user_delete));
+    // If authenticated user does not exist or the id of that user does not match the req params id
+    // we return an error body
+    if (!authenticatedUser || authenticatedUser.id != req.params.id) {
+      // Custom error body for Forbidden request, which means only this particular
+      // user can delete himself and not anyone
+      return next(new ForbiddenException(en.unauthorized_user_delete));
+    }
+    // If Driver is authenticated properly
+    // Delete Driver from the Driver Table
+    await DriverService.deleteUser(req.params.id);
+    res.send();
   }
-  // If Driver is authenticated properly
-  // Delete Driver from the Driver Table
-  await DriverService.deleteUser(req.params.id);
-  res.send();
-});
+);
 
 module.exports = router;

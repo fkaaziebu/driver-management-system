@@ -3,7 +3,7 @@ const { randomString } = require("../shared/generator");
 const sequelize = require("../config/database");
 const EmailService = require("../email/EmailService");
 const EmailException = require("../email/EmailException");
-const InvalidTokenException = require("../error/InvalidTokenException")
+const InvalidTokenException = require("../error/InvalidTokenException");
 const Admin = require("./Admin");
 
 const save = async (body) => {
@@ -62,12 +62,40 @@ const activate = async (token) => {
   if (!user) {
     throw new InvalidTokenException();
   }
-  // Change the inactive field of user to false and 
+  // Change the inactive field of user to false and
   // make the activation token field empty
   user.inactive = false;
   user.activationToken = null;
   // save the user updated fields to database
   await user.save();
-}
+};
 
-module.exports = { save, findByEmail, activate };
+const updateUser = async (id, updatedBody) => {
+  // Find the Driver with this particular id
+  const user = await Admin.findOne({ where: { id: id } });
+  // Update their fields
+  user.username = updatedBody.username;
+  /**
+   * Update the user's image only when they upload an image
+   * Old images are deleted as well to prevent storing of old images
+   */
+  if (updatedBody.image) {
+    if (user.image) {
+      // Delete exiting image if any
+      await FileService.deleteProfileImage(user.image);
+    }
+    // Save new image to folder and name to database
+    user.image = await FileService.saveProfileImage(updatedBody.image);
+  }
+  // Save the field after the update
+  await user.save();
+  // Return appropriate body after an update
+  // especially username and image since they are the ones to be updated
+  return {
+    id: id,
+    username: user.username,
+    email: user.email,
+  };
+};
+
+module.exports = { save, findByEmail, activate, updateUser };

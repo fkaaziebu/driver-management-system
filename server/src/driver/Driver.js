@@ -1,6 +1,6 @@
 const Sequelize = require("sequelize");
 const sequelize = require("../config/database");
-const Token = require("../auth/Token");
+const DriverToken = require("../auth/DriverToken");
 
 const Model = Sequelize.Model;
 
@@ -34,6 +34,6 @@ Driver.init(
   { sequelize, modelName: "driver" }
 );
 
-Driver.hasMany(Token, { onDelete: "cascade", foreignKey: "userId" });
+Driver.hasMany(DriverToken, { onDelete: "cascade", foreignKey: "userId" });
 
 module.exports = Driver;

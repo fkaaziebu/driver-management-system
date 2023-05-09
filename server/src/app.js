@@ -5,7 +5,7 @@ const AdminRouter = require("./admin/AdminRouter.js")
 const cors = require("cors");
 const helmet = require("helmet");
 const ErrorHandler = require("./error/ErrorHandler.js");
-const tokenAuthentication = require("./middleware/tokenAuthentication");
+// const driverTokenAuthentication = require("./middleware/driverTokenAuthentication");
 const FileService = require("./file/FileService");
 const config = require("config");
 const path = require("path");
@@ -31,7 +31,7 @@ app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
 app.use(cors());
 
 /* ROUTES */
-app.use(tokenAuthentication);
+// app.use(driverTokenAuthentication);
 
 app.use(DriverRouter);
 
