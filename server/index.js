@@ -1,6 +1,7 @@
 const app = require("./src/app");
 const sequelize = require("./src/config/database");
-const TokenService = require("./src/auth/TokenService");
+const DriverTokenService = require("./src/auth/DriverTokenService");
+const AdminTokenService = require("./src/auth/AdminTokenService");
 const bcrypt = require("bcrypt");
 const Driver = require("./src/driver/Driver");
 
@@ -22,6 +23,7 @@ sequelize.sync({ force: true }).then(async () => {
 
 sequelize.sync({ force: true });
 
-TokenService.scheduleCleanup();
+DriverTokenService.scheduleCleanup();
+AdminTokenService.scheduleCleanup();
 
 app.listen(5001, () => console.log("App is running!"));

@@ -7,6 +7,7 @@ const ForbiddenException = require("../error/ForbiddenException");
 const FileService = require("../file/FileService");
 const loggerF = require("../logs/loggerF");
 const driverTokenAuthentication = require("../middleware/driverTokenAuthentication");
+const pagination = require("../middleware/pagination");
 
 const router = express.Router();
 
@@ -80,36 +81,49 @@ router.post(
   }
 );
 
-/* DRIVER ACTIVATION ROUTE */
-router.post(
-  "/api/1.0/drivers/token/:token",
-  async (req, res, next) => {
-    // Logging All Request coming to this endpoint
-    loggerF("", req);
-    // Get the token passed as params in the route
-    const token = req.params.token;
+/* DRIVER LISTING ROUTE */
+router.get("/api/1.0/drivers", pagination, async (req, res) => {
+  const { page, size } = req.pagination;
+  const drivers = await DriverService.getDrivers(page, size);
+  res.send(drivers);
+});
 
-    try {
-      // Call the DriverService to activate the driver with
-      // with the provided token
-      await DriverService.activate(token);
-      // Send a success message if driver was successfully activated
-      res.send({ message: en.account_activation_success });
-    } catch (err) {
-      // Return an error message if activation failed
-      /**
-       * Errors that could occur include
-       * 1. Invalid Token
-       */
-      next(err);
-    }
+/* DRIVER ACTIVATION ROUTE */
+router.post("/api/1.0/drivers/token/:token", async (req, res, next) => {
+  // Logging All Request coming to this endpoint
+  loggerF("", req);
+  // Get the token passed as params in the route
+  const token = req.params.token;
+
+  try {
+    // Call the DriverService to activate the driver with
+    // with the provided token
+    await DriverService.activate(token);
+    // Send a success message if driver was successfully activated
+    res.send({ message: en.account_activation_success });
+  } catch (err) {
+    // Return an error message if activation failed
+    /**
+     * Errors that could occur include
+     * 1. Invalid Token
+     */
+    next(err);
   }
-);
+});
+
+/* GET SPECIFIC DRIVER */
+router.get("/api/1.0/drivers/:id", async (req, res, next) => {
+  try {
+    const driver = await DriverService.getDriver(req.params.id);
+    res.send(driver);
+  } catch (err) {
+    next(err);
+  }
+});
 
 /* DRIVER UPDATE ROUTE */
 router.put(
   "/api/1.0/drivers/:id",
-  driverTokenAuthentication,
   check("username")
     .notEmpty()
     .withMessage(en.username_null)

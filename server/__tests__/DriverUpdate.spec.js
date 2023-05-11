@@ -223,7 +223,7 @@ describe("Driver update", () => {
     });
     expect(response.status).toBe(400);
   });
-  it("keeps the old image after user only updates useername", async () => {
+  it("keeps the old image after user only updates username", async () => {
     const fileInBase64 = readFileAsBase64();
     const savedUser = await addUser();
     const validUpdate = { username: "user1-updated", image: fileInBase64 };

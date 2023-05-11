@@ -51,7 +51,7 @@ const activate = async (token) => {
   if (!user) {
     throw new InvalidTokenException();
   }
-  // Change the inactive field of user to false and 
+  // Change the inactive field of user to false and
   // make the activation token field empty
   user.inactive = false;
   user.activationToken = null;
@@ -59,7 +59,24 @@ const activate = async (token) => {
   await user.save();
 };
 
-const getUser = async (id) => {
+const getDrivers = async (page, size) => {
+  const usersWithCount = await Driver.findAndCountAll({
+    where: {
+      inactive: false,
+    },
+    attributes: ["id", "username", "email", "image"],
+    limit: size,
+    offset: page * size,
+  });
+  return {
+    content: usersWithCount.rows,
+    page,
+    size,
+    totalPages: Math.ceil(usersWithCount.count / size),
+  };
+};
+
+const getDriver = async (id) => {
   const user = await Driver.findOne({
     where: { id: id, inactive: false },
     attributes: ["id", "username", "email", "image"],
@@ -108,7 +125,8 @@ module.exports = {
   save,
   findByEmail,
   activate,
-  getUser,
+  getDrivers,
+  getDriver,
   updateUser,
   deleteUser,
 };

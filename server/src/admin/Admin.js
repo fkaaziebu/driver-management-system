@@ -32,6 +32,9 @@ Admin.init(
     password: {
       type: Sequelize.STRING,
     },
+    image: {
+      type: Sequelize.STRING,
+    },
     inactive: {
       type: Sequelize.BOOLEAN,
       defaultValue: true,

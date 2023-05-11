@@ -3,8 +3,10 @@ const { randomString } = require("../shared/generator");
 const sequelize = require("../config/database");
 const EmailService = require("../email/EmailService");
 const EmailException = require("../email/EmailException");
+const NotFoundException = require("../error/NotFoundException");
 const InvalidTokenException = require("../error/InvalidTokenException");
 const Admin = require("./Admin");
+const FileService = require("../file/FileService");
 
 const save = async (body) => {
   // Get all information for creating a user from the request body
@@ -95,7 +97,19 @@ const updateUser = async (id, updatedBody) => {
     id: id,
     username: user.username,
     email: user.email,
+    image: user.image,
   };
 };
 
-module.exports = { save, findByEmail, activate, updateUser };
+const getAdmin = async (id) => {
+  const user = await Admin.findOne({
+    where: { id: id, inactive: false },
+    attributes: ["id", "username", "email", "image"],
+  });
+  if (!user) {
+    throw new NotFoundException("User not found");
+  }
+  return user;
+};
+
+module.exports = { save, findByEmail, activate, updateUser, getAdmin };

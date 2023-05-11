@@ -42,4 +42,17 @@ const verify = async (token) => {
   return { id: userId };
 };
 
-module.exports = { createToken, deleteToken, verify };
+const scheduleCleanup = () => {
+  setInterval(async () => {
+    const oneWeekAgo = new Date(Date.now() - ONE_WEEK_IN_MILLIS);
+    await AdminToken.destroy({
+      where: {
+        lastUsedAt: {
+          [Sequelize.Op.lt]: oneWeekAgo,
+        },
+      },
+    });
+  }, 60 * 60 * 1000);
+};
+
+module.exports = { createToken, deleteToken, verify, scheduleCleanup };

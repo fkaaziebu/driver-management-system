@@ -5,6 +5,7 @@ const { check, validationResult } = require("express-validator");
 const ValidationException = require("../error/ValidationException");
 const ForbiddenException = require("../error/ForbiddenException");
 const adminTokenAuthentication = require("../middleware/adminTokenAuthentication");
+const FileService = require("../file/FileService");
 
 const router = express.Router();
 
@@ -119,9 +120,58 @@ router.post("/api/1.0/admins/token/:token", async (req, res, next) => {
   }
 });
 
+/* GET SPECIFIC ADMIN */
+router.get("/api/1.0/admins/:id", async (req, res, next) => {
+  // Check whether the request has an authenticated user
+  const authenticatedUser = req.authenticatedUser;
+
+  // If authenticated user does not exist or the id of that user does not match the req params id
+  // we return an error body
+  if (!authenticatedUser || authenticatedUser.id != req.params.id) {
+    // Custom error body for Forbidden request, which means only this particular
+    // user can update his details
+    return next(new ForbiddenException(en.unauthorized_user_update));
+  }
+
+  try {
+    const admin = await AdminService.getAdmin(req.params.id);
+    res.send(admin);
+  } catch (err) {
+    next(err);
+  }
+  // res.status(404).send();
+});
+
 /* ADMIN UPDATE ROUTE */
 router.put(
   "/api/1.0/admins/:id",
+  check("username")
+    .notEmpty()
+    .withMessage(en.username_null)
+    .bail()
+    .isLength({ min: 4, max: 32 })
+    .withMessage(en.username_size),
+  check("image").custom(async (imageAsBase64String) => {
+    // If no image is passed in update
+    // request then return true as success
+    if (!imageAsBase64String) {
+      return true;
+    }
+    // Get buffer of the image passed
+    const buffer = Buffer.from(imageAsBase64String, "base64");
+    if (!FileService.isLessThan2MB(buffer)) {
+      // Image size must not be greater than 2MB
+      // We return appropriate error body if image is greater
+      throw new Error(en.profile_image_size);
+    }
+    // Check for file type
+    const supportedType = await FileService.isSupportedFileType(buffer);
+    if (!supportedType) {
+      // Throw an error for a file which is not a supported in the system
+      throw new Error(en.unsupported_image_file);
+    }
+    return true;
+  }),
   async (req, res, next) => {
     // Check whether the request has an authenticated user
     const authenticatedUser = req.authenticatedUser;
@@ -132,6 +182,14 @@ router.put(
       // Custom error body for Forbidden request, which means only this particular
       // user can update his details
       return next(new ForbiddenException(en.unauthorized_user_update));
+    }
+    // Get errors as a result of username validation
+    const errors = validationResult(req);
+    // If Errors occur as a result of validation
+    // return an appropriate error message to frontend
+    if (!errors.isEmpty()) {
+      // Error handler for validation issues
+      return next(new ValidationException(errors.array()));
     }
     // If Admin is authenticated properly
     // Update his details using the request body
