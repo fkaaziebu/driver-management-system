@@ -49,25 +49,23 @@ const SignupRegisterModal = ({ open, setOpen }) => {
           p: 4,
         }}
       >
-        <form onSubmit={handleSubmit(submitLoginData)}>
+        {isLogin ? (
+          <LoginForm register={register} errors={errors} />
+        ) : (
+          <RegisterForm register={register} errors={errors} />
+        )}
+        <Box
+          sx={{ cursor: "pointer", mt: 3 }}
+          onClick={() => setIsLogin(!isLogin)}
+        >
           {isLogin ? (
-            <LoginForm register={register} errors={errors} />
+            <Typography>Don't have an account? Click to register.</Typography>
           ) : (
-            <RegisterForm register={register} errors={errors} />
+            <Typography>
+              Already have an account? Click here to login
+            </Typography>
           )}
-          <Box
-            sx={{ cursor: "pointer", mt: 3 }}
-            onClick={() => setIsLogin(!isLogin)}
-          >
-            {isLogin ? (
-              <Typography>Don't have an account? Click to register.</Typography>
-            ) : (
-              <Typography>
-                Already have an account? Click here to login
-              </Typography>
-            )}
-          </Box>
-        </form>
+        </Box>
       </Box>
     </Modal>
   );

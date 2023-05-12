@@ -62,39 +62,9 @@ function LandingPage() {
           </Box>
         </Box>
       </FlexBetween>
-      {/* Displaying a heading and two buttons for registration */}
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "flex-end",
-          alignItems: "center",
-          padding: isXsScreen ? "0.5rem" : "0 0 1.5rem 0",
-        }}
-      >
-        <Typography
-          variant={isXsScreen ? "h3" : "h1"}
-          sx={{ fontStyle: "italic" }}
-        >
-          Register as:
-        </Typography>
-        <FlexBetween gap={isXsScreen ? "1rem" : "2rem"}>
-          <Button
-            variant="contained"
-            size="large"
-            sx={{ backgroundColor: "#19A7CE" }}
-          >
-            Administrator
-          </Button>
-          <Button
-            variant="contained"
-            size="large"
-            sx={{ backgroundColor: "#19A7CE" }}
-          >
-            Driver
-          </Button>
-        </FlexBetween>
-      </Box>
+      
     </Box>
+    
   );
 }
 
