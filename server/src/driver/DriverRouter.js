@@ -183,7 +183,6 @@ router.put(
 /* DRIVER DELETE ROUTE */
 router.delete(
   "/api/1.0/drivers/:id",
-  driverTokenAuthentication,
   async (req, res, next) => {
     // Logging All Request coming to this endpoint
     loggerF("", req);
