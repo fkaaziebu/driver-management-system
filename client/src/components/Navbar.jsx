@@ -7,7 +7,7 @@ function Navbar() {
         <a className="nav-link link-light fs-1" href="#home">
           DMS
         </a>
-        <a className="nav-link link-light fs-1" href="#home">
+        <a className="nav-link link-light fs-5" href="#home">
           LOGIN
         </a>
       </div>
