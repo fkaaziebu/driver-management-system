@@ -1,8 +1,26 @@
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap");
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-body {
-  background-color: #003000;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
+
+.vw-50 {
+  width: 50vw;
+}
+
+.vh-50 {
+  height: 75vh;
+}
+
+.my-10 {
+  margin: 100px 0 100px 0;
+}
+
+.bg-img {
+  background-image: url("/src/assets/landing.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+  z-index: -99999;
+  box-shadow: inset 0 0 0 2000px rgba(0, 0, 0, 0.65);
+}
+
